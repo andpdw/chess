@@ -22,6 +22,15 @@ public class ChessMove {
     }
 
     /**
+     * @param other in a ChessMove to copy
+     */
+    public ChessMove(ChessMove other) {
+        start = new ChessPosition(other.getStartPosition().getRow(), other.getStartPosition().getColumn());
+        end = new ChessPosition(other.getEndPosition().getRow(), other.getEndPosition().getColumn());
+        promotion = other.getPromotionPiece();
+    }
+
+    /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
