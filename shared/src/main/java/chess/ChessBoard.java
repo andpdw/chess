@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -21,7 +24,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getColumn()][position.getRow()] = piece;
+        board[position.getColumn()-1][position.getRow()-1] = piece;
     }
 
     /**
@@ -32,10 +35,10 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        if (board[position.getColumn()][position.getRow()] == null) {
+        if (board[position.getColumn()-1][position.getRow()-1] == null) {
             return null;
         } else {
-            return board[position.getColumn()][position.getRow()];
+            return board[position.getColumn()-1][position.getRow()-1];
         }
     }
 
@@ -45,5 +48,25 @@ public class ChessBoard {
      */
     public void resetBoard() {
         board = new ChessPiece[8][8];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
+    }
+
+    public static void main(String[] args) {
+        ChessBoard board = new ChessBoard();
+        board.addPiece(new ChessPosition(3, 6), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
+        board.getPiece(new ChessPosition(3, 6)).pieceMoves(board, new ChessPosition(3, 6));
     }
 }

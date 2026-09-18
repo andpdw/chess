@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -53,7 +55,29 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        ChessPiece piece = board.getPiece(myPosition);
+        if (piece == null) {
+            return null;
+        }
+        if (piece.getPieceType() == PieceType.PAWN) {
+            return null;
+        } else if (piece.getPieceType() == PieceType.KING) {
+            int[][] kingMoves = {{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
+
+            for (int i = 0; i<8; i++) {
+                ChessPosition testPos = new ChessPosition(myPosition.getRow()+kingMoves[i][0], myPosition.getColumn()+kingMoves[i][1]);
+                if (testPos.InBounds() && (board.getPiece(testPos) == null || board.getPiece(testPos).getTeamColor() != piece.getTeamColor())) {
+                    ChessMove move = new ChessMove(myPosition, testPos, null);
+                    possibleMoves.add(new ChessMove(move));
+                }
+            }
+        }
+        for (ChessMove m : possibleMoves) {
+            System.out.print(m.toString());
+        }
+
+        return possibleMoves;
     }
 
     @Override
