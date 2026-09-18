@@ -34,6 +34,16 @@ public class ChessPosition {
         return col_val;
     }
 
+    public boolean InBounds() {
+        if (col_val > 7 || col_val < 0) {
+            return false;
+        } else if (row_val > 7 || row_val < 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
