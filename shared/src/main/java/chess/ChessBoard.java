@@ -66,7 +66,7 @@ public class ChessBoard {
 
     public static void main(String[] args) {
         ChessBoard board = new ChessBoard();
-        board.addPiece(new ChessPosition(3, 6), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
-        board.getPiece(new ChessPosition(3, 6)).pieceMoves(board, new ChessPosition(3, 6));
+        board.addPiece(new ChessPosition(1, 8), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
+        board.getPiece(new ChessPosition(1, 8)).pieceMoves(board, new ChessPosition(1, 8));
     }
 }

@@ -35,9 +35,9 @@ public class ChessPosition {
     }
 
     public boolean InBounds() {
-        if (col_val > 7 || col_val < 0) {
+        if (col_val > 8 || col_val < 1) {
             return false;
-        } else if (row_val > 7 || row_val < 0) {
+        } else if (row_val > 8 || row_val < 1) {
             return false;
         } else {
             return true;
@@ -56,5 +56,10 @@ public class ChessPosition {
     @Override
     public int hashCode() {
         return Objects.hash(row_val, col_val);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPosition{" + row_val + "," + col_val + '}';
     }
 }

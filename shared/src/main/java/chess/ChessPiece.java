@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -72,9 +71,16 @@ public class ChessPiece {
                     possibleMoves.add(new ChessMove(move));
                 }
             }
-        }
-        for (ChessMove m : possibleMoves) {
-            System.out.print(m.toString());
+        } else if (piece.getPieceType() == PieceType.KNIGHT) {
+            int[][] knightMoves = {{2, 1}, {2, -1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {1, -2}, {-1, -2}};
+
+            for (int[] m : knightMoves) {
+                ChessPosition testPos = new ChessPosition(myPosition.getRow()+ m[0], myPosition.getColumn()+ m[1]);
+                if (testPos.InBounds() && (board.getPiece(testPos) == null || board.getPiece(testPos).getTeamColor() != piece.getTeamColor())) {
+                    ChessMove move = new ChessMove(myPosition, testPos, null);
+                    possibleMoves.add(new ChessMove(move));
+                }
+            }
         }
 
         return possibleMoves;
