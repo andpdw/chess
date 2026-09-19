@@ -48,6 +48,53 @@ public class ChessBoard {
      */
     public void resetBoard() {
         board = new ChessPiece[8][8];
+
+        //adds the white pawns
+        for (int i = 1; i <= 8; i++) {
+            ChessPosition tempPosition = new ChessPosition(2, i);
+            ChessPiece tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            addPiece(tempPosition, tempPiece);
+        }
+        //adds the white back row
+        for (int i = 1; i <= 8; i++) {
+            ChessPosition tempPosition = new ChessPosition(1, i);
+            ChessPiece tempPiece;
+            if (i == 1 || i == 8) {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+            } else if (i == 2 || i == 7) {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+            } else if (i == 3 || i == 6) {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+            } else if (i == 4) {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+            } else {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+            }
+            addPiece(tempPosition, tempPiece);
+        }
+        //adds the black pawns
+        for (int i = 1; i <= 8; i++) {
+            ChessPosition tempPosition = new ChessPosition(7, i);
+            ChessPiece tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+            addPiece(tempPosition, tempPiece);
+        }
+        //adds the black back row
+        for (int i = 1; i <= 8; i++) {
+            ChessPosition tempPosition = new ChessPosition(8, i);
+            ChessPiece tempPiece;
+            if (i == 1 || i == 8) {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+            } else if (i == 2 || i == 7) {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+            } else if (i == 3 || i == 6) {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+            } else if (i == 4) {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+            } else {
+                tempPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+            }
+            addPiece(tempPosition, tempPiece);
+        }
     }
 
     @Override
@@ -66,7 +113,13 @@ public class ChessBoard {
 
     public static void main(String[] args) {
         ChessBoard board = new ChessBoard();
-        board.addPiece(new ChessPosition(1, 8), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
-        board.getPiece(new ChessPosition(1, 8)).pieceMoves(board, new ChessPosition(1, 8));
+        board.resetBoard();
+        for (int i = 1; i<=8; i++) {
+            for (int j = 1; j<=8; j++) {
+                ChessPosition temp = new ChessPosition(i, j);
+                System.out.print(board.getPiece(temp) + "|");
+            }
+            System.out.println();
+        }
     }
 }
