@@ -21,7 +21,7 @@ public class ChessBoard {
         board = new ChessPiece[8][8];
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
-                ChessPosition pos = new ChessPosition(i, j);
+                ChessPosition pos = new ChessPosition(j+1, i+1);
                 board[i][j] = boardOrigin.getPiece(pos);
             }
         }
