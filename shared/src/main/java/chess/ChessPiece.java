@@ -20,6 +20,11 @@ public class ChessPiece {
         pieceType = type;
     }
 
+    public ChessPiece(ChessPiece pieceOrigin) {
+        color = pieceOrigin.getTeamColor();
+        pieceType = pieceOrigin.getPieceType();
+    }
+
     /**
      * The various different chess piece options
      */
