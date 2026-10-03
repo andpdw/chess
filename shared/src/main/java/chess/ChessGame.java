@@ -126,4 +126,14 @@ public class ChessGame {
     public int hashCode() {
         return Objects.hash(teamTurn, board);
     }
+
+    @Override
+    public String toString() {
+        return board.toString() + "\nTeam Turn: " + teamTurn;
+    }
+
+    public static void main(String[] args) {
+        ChessGame game = new ChessGame();
+        System.out.print(game.toString());
+    }
 }
