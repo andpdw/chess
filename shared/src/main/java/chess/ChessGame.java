@@ -11,12 +11,12 @@ import java.util.Objects;
  */
 public class ChessGame {
     private TeamColor teamTurn;
-    private ChessBoard board;
+    private ChessBoard boardInternal;
 
     public ChessGame() {
         teamTurn = TeamColor.WHITE;
-        board = new ChessBoard();
-        board.resetBoard();
+        boardInternal = new ChessBoard();
+        boardInternal.resetBoard();
     }
 
     /**
@@ -101,7 +101,12 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                ChessPosition pos = new ChessPosition(i+1, j+1);
+                boardInternal.addPiece(pos, new ChessPiece(board.getPiece(pos)));
+            }
+        }
     }
 
     /**
@@ -110,7 +115,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return new ChessBoard(board);
+        return new ChessBoard(boardInternal);
     }
 
     @Override
@@ -119,17 +124,17 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return teamTurn == chessGame.teamTurn && Objects.equals(board, chessGame.board);
+        return teamTurn == chessGame.teamTurn && Objects.equals(boardInternal, chessGame.boardInternal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(teamTurn, board);
+        return Objects.hash(teamTurn, boardInternal);
     }
 
     @Override
     public String toString() {
-        return board.toString() + "\nTeam Turn: " + teamTurn;
+        return boardInternal.toString() + "\nTeam Turn: " + teamTurn;
     }
 
     public static void main(String[] args) {
