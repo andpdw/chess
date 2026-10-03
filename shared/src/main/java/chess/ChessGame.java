@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -71,7 +72,44 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        //Finds the king for the team
+        ChessPosition kingPos = new ChessPosition(-1, -1);
+        for (int i=0; i<8; i++) {
+            boolean kingFound = false;
+            for (int j=0; j<8; j++) {
+                ChessPosition pos = new ChessPosition(j+1, i+1);
+                if (boardInternal.getPiece(pos) != null) {
+                    ChessPiece testPiece = new ChessPiece(boardInternal.getPiece(pos));
+                    if (testPiece.getTeamColor() == teamColor && testPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                        kingPos = new ChessPosition(pos);
+                        kingFound = true;
+                        break;
+                    }
+                }
+            }
+            if (kingFound) {
+                break;
+            }
+        }
+        if (kingPos.InBounds()) {
+            //Loops through every other piece to see if they can capture the king
+            for (int i=0; i<8; i++) {
+                for (int j=0; j<8; j++) {
+                    ChessPosition pos = new ChessPosition(j+1, i+1);
+                    if (boardInternal.getPiece(pos) != null && boardInternal.getPiece(pos).getTeamColor() != teamColor) {
+                        Collection<ChessMove> possibleMoves = boardInternal.getPiece(pos).pieceMoves(boardInternal, pos);
+                        for (ChessMove move : possibleMoves) {
+                            if (move.getEndPosition().equals(kingPos)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            throw new RuntimeException("Unable to find King");
+        }
+        return false;
     }
 
     /**
@@ -104,7 +142,11 @@ public class ChessGame {
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
                 ChessPosition pos = new ChessPosition(i+1, j+1);
-                boardInternal.addPiece(pos, new ChessPiece(board.getPiece(pos)));
+                if (board.getPiece(pos) != null) {
+                    boardInternal.addPiece(pos, new ChessPiece(board.getPiece(pos)));
+                } else {
+                    boardInternal.addPiece(pos, null);
+                }
             }
         }
     }
@@ -140,5 +182,6 @@ public class ChessGame {
     public static void main(String[] args) {
         ChessGame game = new ChessGame();
         System.out.print(game.toString());
+        System.out.print(game.isInCheck(TeamColor.WHITE));
     }
 }

@@ -18,6 +18,11 @@ public class ChessPosition {
         col_val = col;
     }
 
+    public ChessPosition(ChessPosition origionalPos) {
+        row_val = origionalPos.row_val;
+        col_val = origionalPos.col_val;
+    }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
