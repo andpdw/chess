@@ -216,9 +216,14 @@ public class ChessGame {
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
                 ChessPosition testPos = new ChessPosition(i+1, j+1);
-
+                if (boardInternal.getPiece(testPos) != null && boardInternal.getPiece(testPos).getTeamColor() == teamColor) {
+                    if (!validMoves(testPos).isEmpty()) {
+                        return false;
+                    }
+                }
             }
         }
+        return true;
     }
 
     /**
