@@ -21,8 +21,15 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        javalin.post("/name", this::createUser);
-        javalin.get("/name", this::getAllUsers);
+        //javalin.post("/name", this::createUser);
+        //javalin.get("/name", this::getAllUsers);
+        javalin.delete("/db", this::clearDatabase);
+        javalin.post("/user", this::registerUser);
+        javalin.post("/session", this::loginUser);
+        javalin.delete("/session", this::logoutUser);
+        javalin.get("/game", this::listGames);
+        javalin.post("/game", this::createGame);
+        javalin.put("/game", this::joinGame);
 
     }
 
@@ -35,7 +42,35 @@ public class Server {
         javalin.stop();
     }
 
-    private void createUser(Context ctx) {
+    private void clearDatabase(Context ctx) {
+        return;
+    }
+
+    private void registerUser(Context ctx) {
+        return;
+    }
+
+    private void loginUser(Context ctx) {
+        return;
+    }
+
+    private void logoutUser(Context ctx) {
+        return;
+    }
+
+    private void listGames(Context ctx) {
+        return;
+    }
+
+    private void createGame(Context ctx) {
+        return;
+    }
+
+    private void joinGame(Context ctx) {
+        return;
+    }
+
+    /*private void createUser(Context ctx) {
         try {
             UserData data = getBodyObject(ctx, UserData.class);
             if (dataStorage.GetUserData(data.getUsername()) == null) {
@@ -52,7 +87,7 @@ public class Server {
     private void getAllUsers(Context ctx) {
         String json = new Gson().toJson(dataStorage.GetAllUsers());
         ctx.json(json);
-    }
+    }*/
 
     private static <T> T getBodyObject(Context ctx, Class<T> returnClass) {
         var bodyObject = new Gson().fromJson(ctx.body(), returnClass);
