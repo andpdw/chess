@@ -3,8 +3,8 @@ package model;
 import java.util.UUID;
 
 public class AuthData {
-    private static String authToken;
-    private static String username;
+    private String authToken;
+    private String username;
 
     public AuthData(String usernameIn) {
         username = usernameIn;

@@ -1,9 +1,9 @@
 package model;
 
 public class UserData {
-    static private String username;
-    static private String password;
-    static private String email;
+    private String username;
+    private String password;
+    private String email;
 
     public UserData(String usernameIn, String passwordIn, String emailIn) {
         username = usernameIn;
@@ -17,6 +17,11 @@ public class UserData {
 
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String toString() {
+        return "Username: " +  username + ", Password: " + password + ", email: " + email;
     }
 
     public String getEmail() {
