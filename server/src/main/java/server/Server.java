@@ -43,7 +43,15 @@ public class Server {
     }
 
     private void clearDatabase(Context ctx) {
-        return;
+        try {
+            dataStorage.ClearAuthData();
+            dataStorage.ClearGameData();
+            dataStorage.ClearUserData();
+            ctx.status(200);
+        } catch (Exception e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(500);
+        }
     }
 
     private void registerUser(Context ctx) {
@@ -96,5 +104,9 @@ public class Server {
             throw new RuntimeException("Missing Body Information");
         }
         return bodyObject;
+    }
+
+    private String exceptionToJson(Exception e) {
+        return "{\"message\":\"Error: " + e.getMessage() + "\"}";
     }
 }

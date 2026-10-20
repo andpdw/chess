@@ -19,4 +19,8 @@ public interface DataStorage {
 
     void SetAuthData(AuthData authData);
     AuthData GetAuthData(String userName);
+
+    void ClearUserData();
+    void ClearGameData();
+    void ClearAuthData();
 }

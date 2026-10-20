@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class LocalDataStorage implements DataStorage {
     private static Map<String, UserData> UserDataMap = new HashMap<>();
+    private static Map<Integer, GameData> GameDataMap = new HashMap<>();
+    private static Map<String, AuthData> AuthDataMap = new HashMap<>();
 
     @Override
     public void SetUserData(UserData userData) {
@@ -51,5 +53,20 @@ public class LocalDataStorage implements DataStorage {
     @Override
     public AuthData GetAuthData(String userName) {
         return null;
+    }
+
+    @Override
+    public void ClearUserData() {
+        UserDataMap.clear();
+    }
+
+    @Override
+    public void ClearGameData() {
+        GameDataMap.clear();
+    }
+
+    @Override
+    public void ClearAuthData() {
+        AuthDataMap.clear();
     }
 }
