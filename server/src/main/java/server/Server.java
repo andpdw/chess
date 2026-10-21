@@ -1,6 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.AlreadyTakenException;
+import dataaccess.BadRequestException;
 import dataaccess.LocalDataStorage;
 import io.javalin.*;
 import io.javalin.Javalin;
@@ -11,6 +13,7 @@ import org.eclipse.jetty.server.Authentication;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 public class Server {
     private LocalDataStorage dataStorage = new LocalDataStorage();
@@ -21,8 +24,6 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        //javalin.post("/name", this::createUser);
-        //javalin.get("/name", this::getAllUsers);
         javalin.delete("/db", this::clearDatabase);
         javalin.post("/user", this::registerUser);
         javalin.post("/session", this::loginUser);
@@ -55,7 +56,32 @@ public class Server {
     }
 
     private void registerUser(Context ctx) {
-        return;
+        try {
+            UserData userData = getBodyObject(ctx, UserData.class);
+            if (!userData.validData()) {
+                throw new BadRequestException("bad request");
+            }
+            if (dataStorage.GetUserData(userData.getUsername()) == null) {
+                dataStorage.SetUserData(userData);
+
+                AuthData authData = new AuthData(userData.getUsername());
+                dataStorage.SetAuthData(authData);
+                String json = new Gson().toJson(authData);
+                ctx.json(json);
+                ctx.status(200);
+            } else {
+                throw new AlreadyTakenException("already taken");
+            }
+        } catch (AlreadyTakenException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(403);
+        } catch (BadRequestException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(400);
+        } catch (Exception e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(500);
+        }
     }
 
     private void loginUser(Context ctx) {

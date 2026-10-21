@@ -46,13 +46,31 @@ public class LocalDataStorage implements DataStorage {
     }
 
     @Override
-    public void SetAuthData(AuthData authData) {
-
+    public List<GameData> GetAllGames() {
+        List<GameData> returnList = new ArrayList<>();
+        for (Map.Entry<Integer, GameData> game : GameDataMap.entrySet()) {
+            returnList.add(game.getValue());
+        }
+        return returnList;
     }
 
     @Override
-    public AuthData GetAuthData(String userName) {
-        return null;
+    public void SetAuthData(AuthData authData) {
+        AuthDataMap.put(authData.getAuthToken(), authData);
+    }
+
+    @Override
+    public AuthData GetAuthData(String authToken) {
+        return AuthDataMap.get(authToken);
+    }
+
+    @Override
+    public List<AuthData> GetAllAuthData() {
+        List<AuthData> returnList = new ArrayList<>();
+        for (Map.Entry<String, AuthData> auth : AuthDataMap.entrySet()) {
+            returnList.add(auth.getValue());
+        }
+        return returnList;
     }
 
     @Override

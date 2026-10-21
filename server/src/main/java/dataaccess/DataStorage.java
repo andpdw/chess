@@ -16,9 +16,11 @@ public interface DataStorage {
 
     void SetGameData(GameData gameData);
     GameData GetGameData(int gameID);
+    List<GameData> GetAllGames();
 
     void SetAuthData(AuthData authData);
     AuthData GetAuthData(String userName);
+    List<AuthData> GetAllAuthData();
 
     void ClearUserData();
     void ClearGameData();

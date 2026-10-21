@@ -19,12 +19,24 @@ public class UserData {
         return password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean validData() {
+        if (username.isEmpty() || username.isBlank()) {
+            return false;
+        } else if (password.isEmpty() || password.isBlank()) {
+            return false;
+        } else if (email.isEmpty() || email.isBlank()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
     public String toString() {
         return "Username: " +  username + ", Password: " + password + ", email: " + email;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }
