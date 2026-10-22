@@ -45,7 +45,8 @@ public class DataStorageTests {
         Assertions.assertEquals("test@email.com", userDataTest.getEmail(), "Different Email");
 
         //Tests toString
-        Assertions.assertEquals("Username: usernameTest, Password: passwordTest, email: test@email.com", userDataTest.toString(), "Different String Values");
+        Assertions.assertEquals("Username: usernameTest, Password: passwordTest, email: test@email.com",
+                userDataTest.toString(), "Different String Values");
 
         //Tests validData Function
         Assertions.assertTrue(userDataTest.validData(), "validData returned wrong value");
