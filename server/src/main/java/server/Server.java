@@ -144,7 +144,7 @@ public class Server {
                 throw new UnauthorizedException("unauthorized");
             }
 
-            String json = new Gson().toJson(dataStorage.GetAllGames());
+            String json = new Gson().toJson(Map.of("games", dataStorage.GetAllGames()));
             ctx.json(json);
             ctx.status(200);
         } catch (UnauthorizedException e) {
