@@ -3,7 +3,6 @@ package dataaccess;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,25 +10,25 @@ import java.util.List;
 import java.util.Map;
 
 public class LocalDataStorage implements DataStorage {
-    private static Map<String, UserData> UserDataMap = new HashMap<>();
-    private static Map<Integer, GameData> GameDataMap = new HashMap<>();
-    private static Map<String, AuthData> AuthDataMap = new HashMap<>();
+    private static Map<String, UserData> userDataMap = new HashMap<>();
+    private static Map<Integer, GameData> gameDataMap = new HashMap<>();
+    private static Map<String, AuthData> authDataMap = new HashMap<>();
     private int nextGameID = 0;
 
     @Override
-    public void SetUserData(UserData userData) {
-        UserDataMap.put(userData.getUsername(), userData);
+    public void setUserData(UserData userData) {
+        userDataMap.put(userData.getUsername(), userData);
     }
 
     @Override
-    public UserData GetUserData(String username) {
-        return UserDataMap.get(username);
+    public UserData getUserData(String username) {
+        return userDataMap.get(username);
     }
 
     @Override
-    public List<UserData> GetAllUsers() {
+    public List<UserData> getAllUsers() {
         List<UserData> returnList = new ArrayList<>();
-        for (Map.Entry<String, UserData> user : UserDataMap.entrySet()) {
+        for (Map.Entry<String, UserData> user : userDataMap.entrySet()) {
             returnList.add(user.getValue());
         }
         return returnList;
@@ -37,66 +36,66 @@ public class LocalDataStorage implements DataStorage {
 
 
     @Override
-    public void SetGameData(GameData gameData) {
-        GameDataMap.put(gameData.getID(), gameData);
+    public void setGameData(GameData gameData) {
+        gameDataMap.put(gameData.getID(), gameData);
     }
 
     @Override
-    public GameData GetGameData(int gameID) {
-        return GameDataMap.get(gameID);
+    public GameData getGameData(int gameID) {
+        return gameDataMap.get(gameID);
     }
 
     @Override
-    public List<GameData> GetAllGames() {
+    public List<GameData> getAllGames() {
         List<GameData> returnList = new ArrayList<>();
-        for (Map.Entry<Integer, GameData> game : GameDataMap.entrySet()) {
+        for (Map.Entry<Integer, GameData> game : gameDataMap.entrySet()) {
             returnList.add(game.getValue());
         }
         return returnList;
     }
 
     @Override
-    public int GetNextGameID() {
+    public int getNextGameID() {
         nextGameID += 1;
         return nextGameID;
     }
 
     @Override
-    public void SetAuthData(AuthData authData) {
-        AuthDataMap.put(authData.getAuthToken(), authData);
+    public void setAuthData(AuthData authData) {
+        authDataMap.put(authData.getAuthToken(), authData);
     }
 
     @Override
-    public AuthData GetAuthData(String authToken) {
-        return AuthDataMap.get(authToken);
+    public AuthData getAuthData(String authToken) {
+        return authDataMap.get(authToken);
     }
 
     @Override
-    public List<AuthData> GetAllAuthData() {
+    public List<AuthData> getAllAuthData() {
         List<AuthData> returnList = new ArrayList<>();
-        for (Map.Entry<String, AuthData> auth : AuthDataMap.entrySet()) {
+        for (Map.Entry<String, AuthData> auth : authDataMap.entrySet()) {
             returnList.add(auth.getValue());
         }
         return returnList;
     }
 
     @Override
-    public void RemoveAuthData(String authToken) {
-        AuthDataMap.remove(authToken);
+    public void removeAuthData(String authToken) {
+        authDataMap.remove(authToken);
     }
 
     @Override
-    public void ClearUserData() {
-        UserDataMap.clear();
+    public void clearUserData() {
+        userDataMap.clear();
     }
 
     @Override
-    public void ClearGameData() {
-        GameDataMap.clear();
+    public void clearGameData() {
+        gameDataMap.clear();
     }
 
     @Override
-    public void ClearAuthData() {
-        AuthDataMap.clear();
+    public void clearAuthData() {
+        authDataMap.clear();
     }
 }

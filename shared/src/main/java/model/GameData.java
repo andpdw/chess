@@ -9,9 +9,9 @@ public class GameData {
     private String gameName;
     private ChessGame game;
 
-    public GameData(int ID, String name) {
+    public GameData(int Id, String name) {
         gameName = name;
-        gameID = ID;
+        gameID = Id;
         game = new ChessGame();
     }
 

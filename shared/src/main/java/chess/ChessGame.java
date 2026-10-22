@@ -144,7 +144,7 @@ public class ChessGame {
                 break;
             }
         }
-        if (kingPos.InBounds()) {
+        if (kingPos.inBounds()) {
             //Loops through every other piece to see if they can capture the king
             for (int i=0; i<8; i++) {
                 for (int j=0; j<8; j++) {
@@ -185,7 +185,7 @@ public class ChessGame {
                 break;
             }
         }
-        if (kingPos.InBounds()) {
+        if (kingPos.inBounds()) {
             //Loops through every other piece to see if they can capture the king
             for (int i=0; i<8; i++) {
                 for (int j=0; j<8; j++) {

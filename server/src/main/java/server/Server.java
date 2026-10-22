@@ -46,9 +46,9 @@ public class Server {
 
     private void clearDatabase(Context ctx) {
         try {
-            dataStorage.ClearAuthData();
-            dataStorage.ClearGameData();
-            dataStorage.ClearUserData();
+            dataStorage.clearAuthData();
+            dataStorage.clearGameData();
+            dataStorage.clearUserData();
             ctx.status(200);
         } catch (Exception e) {
             ctx.json(exceptionToJson(e));
@@ -62,11 +62,11 @@ public class Server {
             if (!userData.validData()) {
                 throw new BadRequestException("bad request");
             }
-            if (dataStorage.GetUserData(userData.getUsername()) == null) {
-                dataStorage.SetUserData(userData);
+            if (dataStorage.getUserData(userData.getUsername()) == null) {
+                dataStorage.setUserData(userData);
 
                 AuthData authData = new AuthData(userData.getUsername());
-                dataStorage.SetAuthData(authData);
+                dataStorage.setAuthData(authData);
                 String json = new Gson().toJson(authData);
                 ctx.json(json);
                 ctx.status(200);
@@ -92,12 +92,12 @@ public class Server {
                 throw new BadRequestException("bad request");
             }
 
-            UserData userData = dataStorage.GetUserData(loginData.getUsername());
+            UserData userData = dataStorage.getUserData(loginData.getUsername());
             if (userData == null || (!Objects.equals(userData.getPassword(), loginData.getPassword()))) {
                 throw new UnauthorizedException("unauthorized");
             } else {
                 AuthData authData = new AuthData(loginData.getUsername());
-                dataStorage.SetAuthData(authData);
+                dataStorage.setAuthData(authData);
                 String json = new Gson().toJson(authData);
                 ctx.json(json);
                 ctx.status(200);
@@ -119,11 +119,11 @@ public class Server {
     private void logoutUser(Context ctx) {
         try {
             String authToken = ctx.header("authorization");
-            AuthData authData = dataStorage.GetAuthData(authToken);
+            AuthData authData = dataStorage.getAuthData(authToken);
             if (authData == null) {
                 throw new UnauthorizedException("unauthorized");
             }
-            dataStorage.RemoveAuthData(authToken);
+            dataStorage.removeAuthData(authToken);
             ctx.status(200);
         }catch (UnauthorizedException e) {
             ctx.json(exceptionToJson(e));
@@ -137,12 +137,12 @@ public class Server {
     private void listGames(Context ctx) {
         try {
             String authToken = ctx.header("authorization");
-            AuthData authData = dataStorage.GetAuthData(authToken);
+            AuthData authData = dataStorage.getAuthData(authToken);
             if (authData == null) {
                 throw new UnauthorizedException("unauthorized");
             }
 
-            String json = new Gson().toJson(Map.of("games", dataStorage.GetAllGames()));
+            String json = new Gson().toJson(Map.of("games", dataStorage.getAllGames()));
             ctx.json(json);
             ctx.status(200);
         } catch (UnauthorizedException e) {
@@ -157,7 +157,7 @@ public class Server {
     private void createGame(Context ctx) {
         try {
             String authToken = ctx.header("authorization");
-            AuthData authData = dataStorage.GetAuthData(authToken);
+            AuthData authData = dataStorage.getAuthData(authToken);
             if (authData == null) {
                 throw new UnauthorizedException("unauthorized");
             }
@@ -168,8 +168,8 @@ public class Server {
                 throw new BadRequestException("bad request");
             }
 
-            GameData gameData = new GameData(dataStorage.GetNextGameID(), bodyObject.get("gameName"));
-            dataStorage.SetGameData(gameData);
+            GameData gameData = new GameData(dataStorage.getNextGameID(), bodyObject.get("gameName"));
+            dataStorage.setGameData(gameData);
 
             String json = new Gson().toJson(Map.of("gameID", gameData.getID()));
             ctx.json(json);
@@ -189,7 +189,7 @@ public class Server {
     private void joinGame(Context ctx) {
         try {
             String authToken = ctx.header("authorization");
-            AuthData authData = dataStorage.GetAuthData(authToken);
+            AuthData authData = dataStorage.getAuthData(authToken);
             if (authData == null) {
                 throw new UnauthorizedException("unauthorized");
             }
@@ -201,8 +201,8 @@ public class Server {
             String playerColor = bodyObject.get("playerColor").getAsString();
             int gameID = bodyObject.get("gameID").getAsInt();
 
-            if (dataStorage.GetGameData(gameID) != null) {
-                GameData gameData = dataStorage.GetGameData(gameID);
+            if (dataStorage.getGameData(gameID) != null) {
+                GameData gameData = dataStorage.getGameData(gameID);
 
                 if (Objects.equals(playerColor, "WHITE")) {
                     if (gameData.getWhiteUsername() == null || Objects.equals(gameData.getWhiteUsername(), "")) {
@@ -220,12 +220,12 @@ public class Server {
                     throw new BadRequestException("bad request");
                 }
 
-                dataStorage.SetGameData(gameData);
+                dataStorage.setGameData(gameData);
             } else {
                 throw new BadRequestException("bad request");
             }
 
-            String json = new Gson().toJson(Map.of("games", dataStorage.GetAllGames()));
+            String json = new Gson().toJson(Map.of("games", dataStorage.getAllGames()));
             ctx.json(json);
             ctx.status(200);
         }catch (BadRequestException e) {
@@ -242,25 +242,6 @@ public class Server {
             ctx.status(500);
         }
     }
-
-    /*private void createUser(Context ctx) {
-        try {
-            UserData data = getBodyObject(ctx, UserData.class);
-            if (dataStorage.GetUserData(data.getUsername()) == null) {
-                dataStorage.SetUserData(data);
-                ctx.status(200);
-            } else {
-                throw new RuntimeException("Username already in use");
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    private void getAllUsers(Context ctx) {
-        String json = new Gson().toJson(dataStorage.GetAllUsers());
-        ctx.json(json);
-    }*/
 
     private static <T> T getBodyObject(Context ctx, Class<T> returnClass) {
         var bodyObject = new Gson().fromJson(ctx.body(), returnClass);

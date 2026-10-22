@@ -10,17 +10,17 @@ import java.util.Objects;
  */
 public class ChessPosition {
 
-    private int row_val;
-    private int col_val;
+    private int rowVal;
+    private int colVal;
 
     public ChessPosition(int row, int col) {
-        row_val = row;
-        col_val = col;
+        rowVal = row;
+        colVal = col;
     }
 
     public ChessPosition(ChessPosition origionalPos) {
-        row_val = origionalPos.row_val;
-        col_val = origionalPos.col_val;
+        rowVal = origionalPos.rowVal;
+        colVal = origionalPos.colVal;
     }
 
     /**
@@ -28,7 +28,7 @@ public class ChessPosition {
      * 1 codes for the bottom row
      */
     public int getRow() {
-        return row_val;
+        return rowVal;
     }
 
     /**
@@ -36,13 +36,13 @@ public class ChessPosition {
      * 1 codes for the left column
      */
     public int getColumn() {
-        return col_val;
+        return colVal;
     }
 
-    public boolean InBounds() {
-        if (col_val > 8 || col_val < 1) {
+    public boolean inBounds() {
+        if (colVal > 8 || colVal < 1) {
             return false;
-        } else if (row_val > 8 || row_val < 1) {
+        } else if (rowVal > 8 || rowVal < 1) {
             return false;
         } else {
             return true;
@@ -55,16 +55,16 @@ public class ChessPosition {
             return false;
         }
         ChessPosition that = (ChessPosition) o;
-        return row_val == that.row_val && col_val == that.col_val;
+        return rowVal == that.rowVal && colVal == that.colVal;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(row_val, col_val);
+        return Objects.hash(rowVal, colVal);
     }
 
     @Override
     public String toString() {
-        return "ChessPosition{" + row_val + "," + col_val + '}';
+        return "ChessPosition{" + rowVal + "," + colVal + '}';
     }
 }

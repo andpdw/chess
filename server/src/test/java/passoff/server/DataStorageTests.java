@@ -23,16 +23,16 @@ public class DataStorageTests {
 
     @BeforeEach
     public void setup() {
-        dataStorageTest.ClearUserData();
-        dataStorageTest.ClearGameData();
-        dataStorageTest.ClearAuthData();
+        dataStorageTest.clearUserData();
+        dataStorageTest.clearGameData();
+        dataStorageTest.clearAuthData();
         authDataTest = new AuthData("usernameTest");
         gameDataTest = new GameData(13, "gameTest");
         userDataTest = new UserData("usernameTest", "passwordTest", "test@email.com");
 
-        dataStorageTest.SetAuthData(authDataTest);
-        dataStorageTest.SetUserData(userDataTest);
-        dataStorageTest.SetGameData(gameDataTest);
+        dataStorageTest.setAuthData(authDataTest);
+        dataStorageTest.setUserData(userDataTest);
+        dataStorageTest.setGameData(gameDataTest);
     }
 
     @Test
@@ -98,24 +98,24 @@ public class DataStorageTests {
     @DisplayName("DataStorageTest")
     public void testDataStorage() {
         //Test get data functions
-        Assertions.assertEquals(authDataTest, dataStorageTest.GetAuthData(authDataTest.getAuthToken()), "Different AuthData");
-        Assertions.assertEquals(userDataTest, dataStorageTest.GetUserData(userDataTest.getUsername()), "Different UserData");
-        Assertions.assertEquals(gameDataTest, dataStorageTest.GetGameData(gameDataTest.getID()), "Different GameData");
+        Assertions.assertEquals(authDataTest, dataStorageTest.getAuthData(authDataTest.getAuthToken()), "Different AuthData");
+        Assertions.assertEquals(userDataTest, dataStorageTest.getUserData(userDataTest.getUsername()), "Different UserData");
+        Assertions.assertEquals(gameDataTest, dataStorageTest.getGameData(gameDataTest.getID()), "Different GameData");
 
         AuthData authDataTest2 = new AuthData("usernameTest2");
         UserData userDataTest2 = new UserData("usernameTest2", "passwordTest2", "test2@email.com");
         GameData gameDataTest2 = new GameData(15, "gameTest2");
 
-        dataStorageTest.SetAuthData(authDataTest2);
-        dataStorageTest.SetUserData(userDataTest2);
-        dataStorageTest.SetGameData(gameDataTest2);
+        dataStorageTest.setAuthData(authDataTest2);
+        dataStorageTest.setUserData(userDataTest2);
+        dataStorageTest.setGameData(gameDataTest2);
 
         List<AuthData> testAuthData = List.of(authDataTest, authDataTest2);
         List<UserData> testUserData = List.of(userDataTest, userDataTest2);
         List<GameData> testGameData = List.of(gameDataTest, gameDataTest2);
 
-        Assertions.assertEquals(testAuthData, dataStorageTest.GetAllAuthData(), "Missing AuthData");
-        Assertions.assertEquals(testUserData, dataStorageTest.GetAllUsers(), "Missing UserData");
-        Assertions.assertEquals(testGameData, dataStorageTest.GetAllGames(), "Missing GameData");
+        Assertions.assertEquals(testAuthData, dataStorageTest.getAllAuthData(), "Missing AuthData");
+        Assertions.assertEquals(testUserData, dataStorageTest.getAllUsers(), "Missing UserData");
+        Assertions.assertEquals(testGameData, dataStorageTest.getAllGames(), "Missing GameData");
     }
 }

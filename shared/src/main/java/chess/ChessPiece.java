@@ -76,7 +76,7 @@ public class ChessPiece {
                 ChessMove move;
 
                 //Forward Check
-                if (forwardPos.InBounds() && board.getPiece(forwardPos) == null) {
+                if (forwardPos.inBounds() && board.getPiece(forwardPos) == null) {
                     if (myPosition.getRow() == 7) {
                         move = new ChessMove(myPosition, forwardPos, PieceType.BISHOP);
                         possibleMoves.add(new ChessMove(move));
@@ -86,7 +86,7 @@ public class ChessPiece {
                         possibleMoves.add(new ChessMove(move));
                         move = new ChessMove(myPosition, forwardPos, PieceType.ROOK);
                         possibleMoves.add(new ChessMove(move));
-                    } else if (myPosition.getRow() == 2 && farForwardPos.InBounds() && board.getPiece(farForwardPos) == null) {
+                    } else if (myPosition.getRow() == 2 && farForwardPos.inBounds() && board.getPiece(farForwardPos) == null) {
                         move = new ChessMove(myPosition, forwardPos, null);
                         possibleMoves.add(new ChessMove(move));
                         move = new ChessMove(myPosition, farForwardPos, null);
@@ -97,7 +97,7 @@ public class ChessPiece {
                     }
                 }
                 //Capture Checks
-                if (captureRight.InBounds() && board.getPiece(captureRight) != null && board.getPiece(captureRight).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                if (captureRight.inBounds() && board.getPiece(captureRight) != null && board.getPiece(captureRight).getTeamColor() == ChessGame.TeamColor.BLACK) {
                     if (myPosition.getRow() == 7) {
                         move = new ChessMove(myPosition, captureRight, PieceType.BISHOP);
                         possibleMoves.add(new ChessMove(move));
@@ -112,7 +112,7 @@ public class ChessPiece {
                         possibleMoves.add(new ChessMove(move));
                     }
                 }
-                if (captureLeft.InBounds() && board.getPiece(captureLeft) != null && board.getPiece(captureLeft).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                if (captureLeft.inBounds() && board.getPiece(captureLeft) != null && board.getPiece(captureLeft).getTeamColor() == ChessGame.TeamColor.BLACK) {
                     if (myPosition.getRow() == 7) {
                         move = new ChessMove(myPosition, captureLeft, PieceType.BISHOP);
                         possibleMoves.add(new ChessMove(move));
@@ -138,7 +138,7 @@ public class ChessPiece {
                 ChessMove move;
 
                 //Forward Check
-                if (forwardPos.InBounds() && board.getPiece(forwardPos) == null) {
+                if (forwardPos.inBounds() && board.getPiece(forwardPos) == null) {
                     if (myPosition.getRow() == 2) {
                         move = new ChessMove(myPosition, forwardPos, PieceType.BISHOP);
                         possibleMoves.add(new ChessMove(move));
@@ -148,7 +148,7 @@ public class ChessPiece {
                         possibleMoves.add(new ChessMove(move));
                         move = new ChessMove(myPosition, forwardPos, PieceType.ROOK);
                         possibleMoves.add(new ChessMove(move));
-                    } else if (myPosition.getRow() == 7 && farForwardPos.InBounds() && board.getPiece(farForwardPos) == null) {
+                    } else if (myPosition.getRow() == 7 && farForwardPos.inBounds() && board.getPiece(farForwardPos) == null) {
                         move = new ChessMove(myPosition, forwardPos, null);
                         possibleMoves.add(new ChessMove(move));
                         move = new ChessMove(myPosition, farForwardPos, null);
@@ -159,7 +159,7 @@ public class ChessPiece {
                     }
                 }
                 //Capture Checks
-                if (captureRight.InBounds() && board.getPiece(captureRight) != null && board.getPiece(captureRight).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                if (captureRight.inBounds() && board.getPiece(captureRight) != null && board.getPiece(captureRight).getTeamColor() == ChessGame.TeamColor.WHITE) {
                     if (myPosition.getRow() == 2) {
                         move = new ChessMove(myPosition, captureRight, PieceType.BISHOP);
                         possibleMoves.add(new ChessMove(move));
@@ -174,7 +174,7 @@ public class ChessPiece {
                         possibleMoves.add(new ChessMove(move));
                     }
                 }
-                if (captureLeft.InBounds() && board.getPiece(captureLeft) != null && board.getPiece(captureLeft).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                if (captureLeft.inBounds() && board.getPiece(captureLeft) != null && board.getPiece(captureLeft).getTeamColor() == ChessGame.TeamColor.WHITE) {
                     if (myPosition.getRow() == 2) {
                         move = new ChessMove(myPosition, captureLeft, PieceType.BISHOP);
                         possibleMoves.add(new ChessMove(move));
@@ -195,7 +195,7 @@ public class ChessPiece {
 
             for (int i = 0; i<8; i++) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+kingMoves[i][0], myPosition.getColumn()+kingMoves[i][1]);
-                if (testPos.InBounds() && (board.getPiece(testPos) == null || board.getPiece(testPos).getTeamColor() != piece.getTeamColor())) {
+                if (testPos.inBounds() && (board.getPiece(testPos) == null || board.getPiece(testPos).getTeamColor() != piece.getTeamColor())) {
                     ChessMove move = new ChessMove(myPosition, testPos, null);
                     possibleMoves.add(new ChessMove(move));
                 }
@@ -205,7 +205,7 @@ public class ChessPiece {
 
             for (int[] m : knightMoves) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+ m[0], myPosition.getColumn()+ m[1]);
-                if (testPos.InBounds() && (board.getPiece(testPos) == null || board.getPiece(testPos).getTeamColor() != piece.getTeamColor())) {
+                if (testPos.inBounds() && (board.getPiece(testPos) == null || board.getPiece(testPos).getTeamColor() != piece.getTeamColor())) {
                     ChessMove move = new ChessMove(myPosition, testPos, null);
                     possibleMoves.add(new ChessMove(move));
                 }
@@ -215,7 +215,7 @@ public class ChessPiece {
 
             while (myPosition.getRow()+i <= 8) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+ i, myPosition.getColumn());
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -232,7 +232,7 @@ public class ChessPiece {
             i = -1;
             while (myPosition.getRow()+i >= 1) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+ i, myPosition.getColumn());
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -249,7 +249,7 @@ public class ChessPiece {
             i = 1;
             while (myPosition.getColumn()+i <= 8) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -266,7 +266,7 @@ public class ChessPiece {
             i = -1;
             while (myPosition.getColumn()+i >= 1) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -285,7 +285,7 @@ public class ChessPiece {
 
             while (myPosition.getRow()+i <= 8 && myPosition.getColumn()+i <= 8) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -302,7 +302,7 @@ public class ChessPiece {
             i = -1;
             while (myPosition.getRow()+i >= 1 && myPosition.getColumn()+i >= 1) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -319,7 +319,7 @@ public class ChessPiece {
             i = 1;
             while (myPosition.getRow()+i <= 8 && myPosition.getColumn()-i >= 1) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -336,7 +336,7 @@ public class ChessPiece {
             i = 1;
             while (myPosition.getRow()-i >= 1 && myPosition.getColumn()+i <= 8) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -356,7 +356,7 @@ public class ChessPiece {
 
             while (myPosition.getRow()+i <= 8) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+ i, myPosition.getColumn());
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -373,7 +373,7 @@ public class ChessPiece {
             i = -1;
             while (myPosition.getRow()+i >= 1) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+ i, myPosition.getColumn());
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -390,7 +390,7 @@ public class ChessPiece {
             i = 1;
             while (myPosition.getColumn()+i <= 8) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -407,7 +407,7 @@ public class ChessPiece {
             i = -1;
             while (myPosition.getColumn()+i >= 1) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -427,7 +427,7 @@ public class ChessPiece {
 
             while (myPosition.getRow()+i <= 8 && myPosition.getColumn()+i <= 8) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -444,7 +444,7 @@ public class ChessPiece {
             i = -1;
             while (myPosition.getRow()+i >= 1 && myPosition.getColumn()+i >= 1) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -461,7 +461,7 @@ public class ChessPiece {
             i = 1;
             while (myPosition.getRow()+i <= 8 && myPosition.getColumn()-i >= 1) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));
@@ -478,7 +478,7 @@ public class ChessPiece {
             i = 1;
             while (myPosition.getRow()-i >= 1 && myPosition.getColumn()+i <= 8) {
                 ChessPosition testPos = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
-                if (testPos.InBounds()) {
+                if (testPos.inBounds()) {
                     if (board.getPiece(testPos) == null) {
                         ChessMove move = new ChessMove(myPosition, testPos, null);
                         possibleMoves.add(new ChessMove(move));

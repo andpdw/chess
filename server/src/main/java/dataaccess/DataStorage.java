@@ -5,26 +5,25 @@ import model.GameData;
 import model.UserData;
 
 import java.util.List;
-import java.util.Map;
 
 
 public interface DataStorage {
 
-    void SetUserData(UserData userData);
-    UserData GetUserData(String username);
-    List<UserData> GetAllUsers();
+    void setUserData(UserData userData);
+    UserData getUserData(String username);
+    List<UserData> getAllUsers();
 
-    void SetGameData(GameData gameData);
-    GameData GetGameData(int gameID);
-    List<GameData> GetAllGames();
-    int GetNextGameID();
+    void setGameData(GameData gameData);
+    GameData getGameData(int gameID);
+    List<GameData> getAllGames();
+    int getNextGameID();
 
-    void SetAuthData(AuthData authData);
-    AuthData GetAuthData(String authToken);
-    List<AuthData> GetAllAuthData();
-    void RemoveAuthData(String authToken);
+    void setAuthData(AuthData authData);
+    AuthData getAuthData(String authToken);
+    List<AuthData> getAllAuthData();
+    void removeAuthData(String authToken);
 
-    void ClearUserData();
-    void ClearGameData();
-    void ClearAuthData();
+    void clearUserData();
+    void clearGameData();
+    void clearAuthData();
 }
