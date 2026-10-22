@@ -5,7 +5,6 @@ import dataaccess.LocalDataStorage;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
@@ -79,14 +78,14 @@ public class DataStorageTests {
         //Tests the adding user functions
         gameDataTest.setBlackUserName("blackUserTest");
         gameDataTest.setWhiteUserName("whiteUserTest");
-        Assertions.assertEquals("whiteUserTest", gameDataTest.getWhiteUserName(), "Different White User");
-        Assertions.assertEquals("blackUserTest", gameDataTest.getBlackUserName(), "Different Black User");
+        Assertions.assertEquals("whiteUserTest", gameDataTest.getWhiteUsername(), "Different White User");
+        Assertions.assertEquals("blackUserTest", gameDataTest.getBlackUsername(), "Different Black User");
         gameDataTest.removeBlackUserName();
         gameDataTest.removeWhiteUserName();
         gameDataTest.setBlackUserName("blackUserTest");
         gameDataTest.setWhiteUserName("whiteUserTest");
-        Assertions.assertEquals("whiteUserTest", gameDataTest.getWhiteUserName(), "Different White User");
-        Assertions.assertEquals("blackUserTest", gameDataTest.getBlackUserName(), "Different Black User");
+        Assertions.assertEquals("whiteUserTest", gameDataTest.getWhiteUsername(), "Different White User");
+        Assertions.assertEquals("blackUserTest", gameDataTest.getBlackUsername(), "Different Black User");
 
         //Tests setting user if already set
         Assertions.assertThrows(RuntimeException.class, () -> gameDataTest.setBlackUserName("duplicateBlack"), "Exception not thrown");

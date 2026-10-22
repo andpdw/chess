@@ -1,20 +1,18 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.LocalDataStorage;
 import dataaccess.UnauthorizedException;
-import io.javalin.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.GameData;
 import model.LoginData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -189,7 +187,60 @@ public class Server {
     }
 
     private void joinGame(Context ctx) {
-        return;
+        try {
+            String authToken = ctx.header("authorization");
+            AuthData authData = dataStorage.GetAuthData(authToken);
+            if (authData == null) {
+                throw new UnauthorizedException("unauthorized");
+            }
+
+            JsonObject bodyObject = getBodyObject(ctx, JsonObject.class);
+            if (bodyObject.get("playerColor") == null || bodyObject.get("gameID") == null) {
+                throw new BadRequestException("bad request");
+            }
+            String playerColor = bodyObject.get("playerColor").getAsString();
+            int gameID = bodyObject.get("gameID").getAsInt();
+
+            if (dataStorage.GetGameData(gameID) != null) {
+                GameData gameData = dataStorage.GetGameData(gameID);
+
+                if (Objects.equals(playerColor, "WHITE")) {
+                    if (gameData.getWhiteUsername() == null || Objects.equals(gameData.getWhiteUsername(), "")) {
+                        gameData.setWhiteUserName(authData.getUsername());
+                    } else {
+                        throw new AlreadyTakenException("already taken");
+                    }
+                } else if (Objects.equals(playerColor, "BLACK")) {
+                    if (gameData.getBlackUsername() == null || Objects.equals(gameData.getBlackUsername(), "")) {
+                        gameData.setBlackUserName(authData.getUsername());
+                    } else {
+                        throw new AlreadyTakenException("already taken");
+                    }
+                } else {
+                    throw new BadRequestException("bad request");
+                }
+
+                dataStorage.SetGameData(gameData);
+            } else {
+                throw new BadRequestException("bad request");
+            }
+
+            String json = new Gson().toJson(Map.of("games", dataStorage.GetAllGames()));
+            ctx.json(json);
+            ctx.status(200);
+        }catch (BadRequestException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(400);
+        } catch (UnauthorizedException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(401);
+        } catch (AlreadyTakenException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(403);
+        } catch (Exception e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(500);
+        }
     }
 
     /*private void createUser(Context ctx) {

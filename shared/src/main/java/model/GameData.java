@@ -4,8 +4,8 @@ import chess.ChessGame;
 
 public class GameData {
     private int gameID;
-    private String whiteUserName;
-    private String blackUserName;
+    private String whiteUsername;
+    private String blackUsername;
     private String gameName;
     private ChessGame game;
 
@@ -27,35 +27,27 @@ public class GameData {
         return game;
     }
 
-    public String getWhiteUserName() {
-        return whiteUserName;
+    public String getWhiteUsername() {
+        return whiteUsername;
     }
 
-    public String getBlackUserName() {
-        return blackUserName;
+    public String getBlackUsername() {
+        return blackUsername;
     }
 
     public void setBlackUserName(String userName) {
-        if (blackUserName == null || blackUserName.isBlank()) {
-            blackUserName = userName;
-        } else {
-            throw new RuntimeException("Black User Already Set");
-        }
+        blackUsername = userName;
     }
 
     public void setWhiteUserName(String userName) {
-        if (whiteUserName == null || whiteUserName.isBlank()) {
-            whiteUserName = userName;
-        } else {
-            throw new RuntimeException("Black User Already Set");
-        }
+        whiteUsername = userName;
     }
 
     public void removeBlackUserName() {
-        blackUserName = "";
+        blackUsername = "";
     }
 
     public void removeWhiteUserName() {
-        whiteUserName = "";
+        whiteUsername = "";
     }
 }
