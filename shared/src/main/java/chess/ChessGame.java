@@ -64,7 +64,9 @@ public class ChessGame {
             TeamColor currentTurn = boardInternal.getPiece(startPosition).getTeamColor();
             Collection<ChessMove> possibleMoves = boardInternal.getPiece(startPosition).pieceMoves(boardInternal, startPosition);
             for (ChessMove move : possibleMoves) {
-                if ((boardInternal.getPiece(move.getEndPosition()) == null) || (boardInternal.getPiece(move.getStartPosition()).getTeamColor() != boardInternal.getPiece(move.getEndPosition()).getTeamColor())) {
+                if ((boardInternal.getPiece(move.getEndPosition()) == null) ||
+                        (boardInternal.getPiece(move.getStartPosition()).getTeamColor() !=
+                                boardInternal.getPiece(move.getEndPosition()).getTeamColor())) {
                     ChessBoard testBoard = new ChessBoard(boardInternal);
                     testBoard.addPiece(move.getEndPosition(), testBoard.getPiece(move.getStartPosition()));
                     testBoard.addPiece(move.getStartPosition(), null);
@@ -107,7 +109,9 @@ public class ChessGame {
             boardInternal.addPiece(move.getEndPosition(), boardInternal.getPiece(move.getStartPosition()));
             boardInternal.addPiece(move.getStartPosition(), null);
         } else {
-            boardInternal.addPiece(move.getEndPosition(), new ChessPiece(boardInternal.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
+            boardInternal.addPiece(move.getEndPosition(),
+                    new ChessPiece(boardInternal.getPiece(move.getStartPosition()).getTeamColor(),
+                            move.getPromotionPiece()));
             boardInternal.addPiece(move.getStartPosition(), null);
         }
 
@@ -125,47 +129,13 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        //Finds the king for the team
-        ChessPosition kingPos = new ChessPosition(-1, -1);
-        for (int i=0; i<8; i++) {
-            boolean kingFound = false;
-            for (int j=0; j<8; j++) {
-                ChessPosition pos = new ChessPosition(j+1, i+1);
-                if (boardInternal.getPiece(pos) != null) {
-                    ChessPiece testPiece = new ChessPiece(boardInternal.getPiece(pos));
-                    if (testPiece.getTeamColor() == teamColor && testPiece.getPieceType() == ChessPiece.PieceType.KING) {
-                        kingPos = new ChessPosition(pos);
-                        kingFound = true;
-                        break;
-                    }
-                }
-            }
-            if (kingFound) {
-                break;
-            }
-        }
-        if (kingPos.inBounds()) {
-            //Loops through every other piece to see if they can capture the king
-            for (int i=0; i<8; i++) {
-                for (int j=0; j<8; j++) {
-                    ChessPosition pos = new ChessPosition(j+1, i+1);
-                    if (boardInternal.getPiece(pos) != null && boardInternal.getPiece(pos).getTeamColor() != teamColor) {
-                        Collection<ChessMove> possibleMoves = boardInternal.getPiece(pos).pieceMoves(boardInternal, pos);
-                        for (ChessMove move : possibleMoves) {
-                            if (move.getEndPosition().equals(kingPos)) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            throw new RuntimeException("Unable to find King");
-        }
-        return false;
+        return isInCheck(teamColor, null);
     }
 
-    public static boolean isInCheck(TeamColor teamColor, ChessBoard board) {
+    public boolean isInCheck(TeamColor teamColor, ChessBoard board) {
+        if (board == null) {
+            board = boardInternal;
+        }
         //Finds the king for the team
         ChessPosition kingPos = new ChessPosition(-1, -1);
         for (int i=0; i<8; i++) {
@@ -185,25 +155,23 @@ public class ChessGame {
                 break;
             }
         }
-        if (kingPos.inBounds()) {
-            //Loops through every other piece to see if they can capture the king
-            for (int i=0; i<8; i++) {
-                for (int j=0; j<8; j++) {
-                    ChessPosition pos = new ChessPosition(j+1, i+1);
-                    if (board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != teamColor) {
-                        Collection<ChessMove> possibleMoves = board.getPiece(pos).pieceMoves(board, pos);
-                        for (ChessMove move : possibleMoves) {
-                            if (move.getEndPosition().equals(kingPos)) {
-                                return true;
-                            }
-                        }
+        if (!kingPos.inBounds()) {
+            throw new RuntimeException("Unable to find King");
+        }
+        //Loops through every other piece to see if they can capture the king
+        boolean inCheck = false;
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                ChessPosition pos = new ChessPosition(j+1, i+1);
+                if (board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != teamColor) {
+                    Collection<ChessMove> possibleMoves = board.getPiece(pos).pieceMoves(board, pos);
+                    for (ChessMove move : possibleMoves) {
+                        inCheck = inCheck || move.getEndPosition().equals(kingPos);
                     }
                 }
             }
-        } else {
-            throw new RuntimeException("Unable to find King");
         }
-        return false;
+        return inCheck;
     }
 
     /**

@@ -4,10 +4,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LocalDataStorage implements DataStorage {
     private static Map<String, UserData> userDataMap = new HashMap<>();
@@ -27,13 +24,8 @@ public class LocalDataStorage implements DataStorage {
 
     @Override
     public List<UserData> getAllUsers() {
-        List<UserData> returnList = new ArrayList<>();
-        for (Map.Entry<String, UserData> user : userDataMap.entrySet()) {
-            returnList.add(user.getValue());
-        }
-        return returnList;
+        return getAllData(UserData.class, userDataMap);
     }
-
 
     @Override
     public void setGameData(GameData gameData) {
@@ -72,11 +64,7 @@ public class LocalDataStorage implements DataStorage {
 
     @Override
     public List<AuthData> getAllAuthData() {
-        List<AuthData> returnList = new ArrayList<>();
-        for (Map.Entry<String, AuthData> auth : authDataMap.entrySet()) {
-            returnList.add(auth.getValue());
-        }
-        return returnList;
+        return getAllData(AuthData.class, authDataMap);
     }
 
     @Override
@@ -97,5 +85,9 @@ public class LocalDataStorage implements DataStorage {
     @Override
     public void clearAuthData() {
         authDataMap.clear();
+    }
+
+    private <T> List<T> getAllData(Class<T> type, Map data) {
+        return new ArrayList<>((Collection) data);
     }
 }
