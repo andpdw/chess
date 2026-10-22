@@ -9,6 +9,7 @@ import io.javalin.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import model.AuthData;
+import model.GameData;
 import model.LoginData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
@@ -136,11 +137,55 @@ public class Server {
     }
 
     private void listGames(Context ctx) {
-        return;
+        try {
+            String authToken = ctx.header("authorization");
+            AuthData authData = dataStorage.GetAuthData(authToken);
+            if (authData == null) {
+                throw new UnauthorizedException("unauthorized");
+            }
+
+            String json = new Gson().toJson(dataStorage.GetAllGames());
+            ctx.json(json);
+            ctx.status(200);
+        } catch (UnauthorizedException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(401);
+        } catch (Exception e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(500);
+        }
     }
 
     private void createGame(Context ctx) {
-        return;
+        try {
+            String authToken = ctx.header("authorization");
+            AuthData authData = dataStorage.GetAuthData(authToken);
+            if (authData == null) {
+                throw new UnauthorizedException("unauthorized");
+            }
+
+            Map<String, String> bodyObject = getBodyObject(ctx, Map.class);
+
+            if (bodyObject.get("gameName") == null || bodyObject.get("gameName").isEmpty()) {
+                throw new BadRequestException("bad request");
+            }
+
+            GameData gameData = new GameData(dataStorage.GetNextGameID(), bodyObject.get("gameName"));
+            dataStorage.SetGameData(gameData);
+
+            String json = new Gson().toJson(Map.of("gameID", gameData.getID()));
+            ctx.json(json);
+            ctx.status(200);
+        }catch (BadRequestException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(400);
+        } catch (UnauthorizedException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(401);
+        } catch (Exception e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(500);
+        }
     }
 
     private void joinGame(Context ctx) {

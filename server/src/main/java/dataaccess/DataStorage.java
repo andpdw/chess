@@ -17,6 +17,7 @@ public interface DataStorage {
     void SetGameData(GameData gameData);
     GameData GetGameData(int gameID);
     List<GameData> GetAllGames();
+    int GetNextGameID();
 
     void SetAuthData(AuthData authData);
     AuthData GetAuthData(String authToken);

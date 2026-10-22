@@ -14,6 +14,7 @@ public class LocalDataStorage implements DataStorage {
     private static Map<String, UserData> UserDataMap = new HashMap<>();
     private static Map<Integer, GameData> GameDataMap = new HashMap<>();
     private static Map<String, AuthData> AuthDataMap = new HashMap<>();
+    private int nextGameID = 0;
 
     @Override
     public void SetUserData(UserData userData) {
@@ -52,6 +53,12 @@ public class LocalDataStorage implements DataStorage {
             returnList.add(game.getValue());
         }
         return returnList;
+    }
+
+    @Override
+    public int GetNextGameID() {
+        nextGameID += 1;
+        return nextGameID;
     }
 
     @Override
