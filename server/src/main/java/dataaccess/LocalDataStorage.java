@@ -74,6 +74,11 @@ public class LocalDataStorage implements DataStorage {
     }
 
     @Override
+    public void RemoveAuthData(String authToken) {
+        AuthDataMap.remove(authToken);
+    }
+
+    @Override
     public void ClearUserData() {
         UserDataMap.clear();
     }

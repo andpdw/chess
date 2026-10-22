@@ -118,7 +118,21 @@ public class Server {
     }
 
     private void logoutUser(Context ctx) {
-        return;
+        try {
+            String authToken = ctx.header("authorization");
+            AuthData authData = dataStorage.GetAuthData(authToken);
+            if (authData == null) {
+                throw new UnauthorizedException("unauthorized");
+            }
+            dataStorage.RemoveAuthData(authToken);
+            ctx.status(200);
+        }catch (UnauthorizedException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(401);
+        } catch (Exception e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(500);
+        }
     }
 
     private void listGames(Context ctx) {
