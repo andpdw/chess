@@ -37,12 +37,12 @@ public class LocalDataStorage implements DataStorage {
 
     @Override
     public void SetGameData(GameData gameData) {
-
+        GameDataMap.put(gameData.getID(), gameData);
     }
 
     @Override
     public GameData GetGameData(int gameID) {
-        return null;
+        return GameDataMap.get(gameID);
     }
 
     @Override

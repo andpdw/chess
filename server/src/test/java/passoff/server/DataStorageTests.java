@@ -5,7 +5,10 @@ import dataaccess.LocalDataStorage;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
+
+import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DataStorageTests {
@@ -99,5 +102,21 @@ public class DataStorageTests {
         Assertions.assertEquals(authDataTest, dataStorageTest.GetAuthData(authDataTest.getAuthToken()), "Different AuthData");
         Assertions.assertEquals(userDataTest, dataStorageTest.GetUserData(userDataTest.getUsername()), "Different UserData");
         Assertions.assertEquals(gameDataTest, dataStorageTest.GetGameData(gameDataTest.getID()), "Different GameData");
+
+        AuthData authDataTest2 = new AuthData("usernameTest2");
+        UserData userDataTest2 = new UserData("usernameTest2", "passwordTest2", "test2@email.com");
+        GameData gameDataTest2 = new GameData(15, "gameTest2");
+
+        dataStorageTest.SetAuthData(authDataTest2);
+        dataStorageTest.SetUserData(userDataTest2);
+        dataStorageTest.SetGameData(gameDataTest2);
+
+        List<AuthData> testAuthData = List.of(authDataTest, authDataTest2);
+        List<UserData> testUserData = List.of(userDataTest, userDataTest2);
+        List<GameData> testGameData = List.of(gameDataTest, gameDataTest2);
+
+        Assertions.assertEquals(testAuthData, dataStorageTest.GetAllAuthData(), "Missing AuthData");
+        Assertions.assertEquals(testUserData, dataStorageTest.GetAllUsers(), "Missing UserData");
+        Assertions.assertEquals(testGameData, dataStorageTest.GetAllGames(), "Missing GameData");
     }
 }
