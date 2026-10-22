@@ -24,7 +24,7 @@ public class UserData {
     }
 
     public boolean validData() {
-        return !username.isEmpty() && !password.isEmpty() && !email.isEmpty();
+        return !(username == null || password == null || email == null || username.isEmpty() || password.isEmpty() || email.isEmpty());
     }
 
     @Override

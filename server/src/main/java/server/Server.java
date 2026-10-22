@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.LocalDataStorage;
+import dataaccess.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import model.AuthData;
+import model.LoginData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 
@@ -85,7 +87,34 @@ public class Server {
     }
 
     private void loginUser(Context ctx) {
-        return;
+        try {
+            LoginData loginData = getBodyObject(ctx, LoginData.class);
+            if (!loginData.validData()) {
+                throw new BadRequestException("bad request");
+            }
+
+            UserData userData = dataStorage.GetUserData(loginData.getUsername());
+            if (userData == null || (!Objects.equals(userData.getPassword(), loginData.getPassword()))) {
+                throw new UnauthorizedException("unauthorized");
+            } else {
+                AuthData authData = new AuthData(loginData.getUsername());
+                dataStorage.SetAuthData(authData);
+                String json = new Gson().toJson(authData);
+                ctx.json(json);
+                ctx.status(200);
+            }
+
+        } catch (BadRequestException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(400);
+        } catch (UnauthorizedException e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(401);
+        } catch (Exception e) {
+            ctx.json(exceptionToJson(e));
+            ctx.status(500);
+        }
+
     }
 
     private void logoutUser(Context ctx) {
