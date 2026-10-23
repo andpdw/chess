@@ -1,13 +1,10 @@
-package passoff.handler;
+package service;
 
 import handler.HandlerClass;
 import handler.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import service.AlreadyTakenException;
-import service.JoinGameData;
-import service.LoginData;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HandlerTests {
@@ -37,7 +34,8 @@ public class HandlerTests {
     public void testHandlerRegisterUser() {
         AuthData response = handler.registerUser(userData);
         Assertions.assertNotNull(response, "No Auth Token Given");
-        Assertions.assertThrows(AlreadyTakenException.class, () -> handler.registerUser(userData), "Did not throw an error for duplciate username");
+        Assertions.assertThrows(AlreadyTakenException.class, () -> handler.registerUser(userData),
+                "Did not throw an error for duplciate username");
     }
 
     @Test
@@ -47,8 +45,10 @@ public class HandlerTests {
         AuthData response = handler.registerUser(userData);
         handler.logoutUser(response.getAuthToken());
 
-        Assertions.assertThrows(UnauthorizedException.class, () -> handler.logoutUser(response.getAuthToken()), "Did not get Unauthorized");
-        Assertions.assertThrows(UnauthorizedException.class, () -> handler.listGames(response.getAuthToken()), "Was able to access data while logged out");
+        Assertions.assertThrows(UnauthorizedException.class, () -> handler.logoutUser(response.getAuthToken()),
+                "Did not get Unauthorized");
+        Assertions.assertThrows(UnauthorizedException.class, () -> handler.listGames(response.getAuthToken()),
+                "Was able to access data while logged out");
     }
 
     @Test
@@ -79,7 +79,8 @@ public class HandlerTests {
     public void testHandlerListGames() {
         AuthData response = handler.registerUser(userData);
 
-        Assertions.assertThrows(UnauthorizedException.class, () -> handler.listGames(authData.getAuthToken()), "Able to access with bad AuthToken");
+        Assertions.assertThrows(UnauthorizedException.class, () -> handler.listGames(authData.getAuthToken()),
+                "Able to access with bad AuthToken");
 
         handler.createGame(response.getAuthToken(), "gameTest1");
         Assertions.assertNotNull(handler.listGames(response.getAuthToken()), "Did not get a list");

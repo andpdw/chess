@@ -1,4 +1,4 @@
-package passoff.service;
+package service;
 
 import handler.UnauthorizedException;
 import model.AuthData;

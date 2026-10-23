@@ -1,4 +1,4 @@
-package passoff.dataaccess;
+package service;
 
 import chess.ChessGame;
 import dataaccess.LocalDataStorage;
