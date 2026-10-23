@@ -29,34 +29,28 @@ public class HandlerClass {
     }
 
     public void logoutUser(String authToken) {
-        if (!authorized(authToken)) {
-            throw new UnauthorizedException("unauthorized");
-        }
+        checkIfAuthorized(authToken);
         service.logoutUser(authToken);
     }
 
     public List<GameData> listGames(String authToken) {
-        if (!authorized(authToken)) {
-            throw new UnauthorizedException("unauthorized");
-        }
+        checkIfAuthorized(authToken);
         return service.listGames();
     }
 
     public int createGame(String authToken, String gameName) {
-        if (!authorized(authToken)) {
-            throw new UnauthorizedException("unauthorized");
-        }
+        checkIfAuthorized(authToken);
         return service.createGame(gameName);
     }
 
     public void joinGame(String authToken, JoinGameData joinGameData) {
-        if (!authorized(authToken)) {
-            throw new UnauthorizedException("unauthorized");
-        }
+        checkIfAuthorized(authToken);
         service.joinGame(authToken, joinGameData);
     }
 
-    public boolean authorized(String authToken) {
-        return service.authorized(authToken);
+    public void checkIfAuthorized(String authToken) {
+        if (!service.authorized(authToken)) {
+            throw new UnauthorizedException("unauthorized");
+        }
     }
 }
