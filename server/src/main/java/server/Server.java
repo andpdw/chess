@@ -1,13 +1,11 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import dataaccess.AlreadyTakenException;
+import service.AlreadyTakenException;
 import handler.HandlerClass;
-import io.javalin.http.Handler;
 import service.BadRequestException;
 import dataaccess.LocalDataStorage;
-import dataaccess.UnauthorizedException;
+import handler.UnauthorizedException;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import model.AuthData;
@@ -18,7 +16,6 @@ import model.UserData;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class Server {
     private HandlerClass handler;

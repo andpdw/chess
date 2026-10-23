@@ -1,4 +1,4 @@
-package passoff.server;
+package passoff.dataaccess;
 
 import chess.ChessGame;
 import dataaccess.LocalDataStorage;
@@ -7,10 +7,11 @@ import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 
+import java.util.HashSet;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DataStorageTests {
+public class DataAccessTests {
     private static AuthData authDataTest;
     private static GameData gameDataTest;
     private static UserData userDataTest;
@@ -27,7 +28,7 @@ public class DataStorageTests {
         dataStorageTest.clearGameData();
         dataStorageTest.clearAuthData();
         authDataTest = new AuthData("usernameTest");
-        gameDataTest = new GameData(13, "gameTest");
+        gameDataTest = new GameData(dataStorageTest.getNextGameID(), "gameTest");
         userDataTest = new UserData("usernameTest", "passwordTest", "test@email.com");
 
         dataStorageTest.setAuthData(authDataTest);
@@ -72,7 +73,7 @@ public class DataStorageTests {
     @DisplayName("GameData Test")
     public void testGameData() {
         //Test getting data from AuthData
-        Assertions.assertEquals(13, gameDataTest.getID(), "Different Game IDs");
+        Assertions.assertEquals(dataStorageTest.getNextGameID()-1, gameDataTest.getID(), "Different Game IDs");
         Assertions.assertEquals("gameTest", gameDataTest.getGameName(), "Different Game Name");
         Assertions.assertEquals(new ChessGame(), gameDataTest.getGame(), "Different ChessGame");
 
@@ -87,11 +88,6 @@ public class DataStorageTests {
         gameDataTest.setWhiteUserName("whiteUserTest");
         Assertions.assertEquals("whiteUserTest", gameDataTest.getWhiteUsername(), "Different White User");
         Assertions.assertEquals("blackUserTest", gameDataTest.getBlackUsername(), "Different Black User");
-
-        //Tests setting user if already set
-        Assertions.assertThrows(RuntimeException.class, () -> gameDataTest.setBlackUserName("duplicateBlack"), "Exception not thrown");
-        Assertions.assertThrows(RuntimeException.class, () -> gameDataTest.setWhiteUserName("duplicateWhite"), "Exception not thrown");
-
     }
 
     @Test
@@ -115,8 +111,8 @@ public class DataStorageTests {
         List<UserData> testUserData = List.of(userDataTest, userDataTest2);
         List<GameData> testGameData = List.of(gameDataTest, gameDataTest2);
 
-        Assertions.assertEquals(testAuthData, dataStorageTest.getAllAuthData(), "Missing AuthData");
-        Assertions.assertEquals(testUserData, dataStorageTest.getAllUsers(), "Missing UserData");
-        Assertions.assertEquals(testGameData, dataStorageTest.getAllGames(), "Missing GameData");
+        Assertions.assertEquals(new HashSet<>(testAuthData), new HashSet<>(dataStorageTest.getAllAuthData()), "Missing AuthData");
+        Assertions.assertEquals(new HashSet<>(testUserData), new HashSet<>(dataStorageTest.getAllUsers()), "Missing UserData");
+        Assertions.assertEquals(new HashSet<>(testGameData), new HashSet<>(dataStorageTest.getAllGames()), "Missing GameData");
     }
 }

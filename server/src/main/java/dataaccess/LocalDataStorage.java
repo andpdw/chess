@@ -87,7 +87,7 @@ public class LocalDataStorage implements DataStorage {
         authDataMap.clear();
     }
 
-    private <T> List<T> getAllData(Class<T> type, Map data) {
-        return new ArrayList<>((Collection) data);
+    private <T> List<T> getAllData(Class<T> type, Map<String, T> data ) {
+        return new ArrayList<>(data.values());
     }
 }

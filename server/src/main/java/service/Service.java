@@ -1,9 +1,8 @@
 package service;
 
-import dataaccess.AlreadyTakenException;
 import dataaccess.DataStorage;
 import dataaccess.LocalDataStorage;
-import dataaccess.UnauthorizedException;
+import handler.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
