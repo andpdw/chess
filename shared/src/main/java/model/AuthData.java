@@ -18,4 +18,8 @@ public class AuthData {
     public String getUsername() {
         return username;
     }
+
+    public boolean validToken() {
+        return !(username.isEmpty() || authToken.isEmpty());
+    }
 }

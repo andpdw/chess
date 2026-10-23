@@ -1,4 +1,4 @@
-package model;
+package service;
 
 public class LoginData {
     private String username;
