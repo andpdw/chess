@@ -58,11 +58,6 @@ public class Service {
         return dataBase.getAllGames();
     }
 
-    public boolean authorized(String authToken) {
-        AuthData authData = dataBase.getAuthData(authToken);
-        return authData != null && authData.validToken();
-    }
-
     public int createGame(String gameName) {
         int gameID = dataBase.getNextGameID();
         GameData gameData = new GameData(gameID, gameName);
@@ -96,5 +91,10 @@ public class Service {
         }
 
         dataBase.setGameData(gameData);
+    }
+
+    public boolean authorized(String authToken) {
+        AuthData authData = dataBase.getAuthData(authToken);
+        return authData != null && authData.validToken();
     }
 }

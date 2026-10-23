@@ -5,7 +5,6 @@ import java.util.Objects;
 public class JoinGameData {
     private String playerColor;
     private int gameID;
-    private String username;
 
     public JoinGameData(String playerColorIn, int gameIDin) {
         playerColor = playerColorIn;

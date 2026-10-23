@@ -3,11 +3,9 @@ package passoff.handler;
 import handler.HandlerClass;
 import handler.UnauthorizedException;
 import model.AuthData;
-import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import service.AlreadyTakenException;
-import service.BadRequestException;
 import service.JoinGameData;
 import service.LoginData;
 
@@ -16,7 +14,6 @@ public class HandlerTests {
     private static HandlerClass handler;
     private static UserData userData;
     private static AuthData authData;
-    private static GameData gameData;
     private static LoginData loginData;
     private static JoinGameData joinGameData;
 
@@ -30,7 +27,6 @@ public class HandlerTests {
         handler.clear();
         userData = new UserData("usernameTest", "passwordTest", "test@email.com");
         authData = new AuthData("usernameTest");
-        gameData = new GameData(13, "gameTest");
         loginData = new LoginData("usernameTest", "passwordTest");
         joinGameData = new JoinGameData("WHITE", 13);
     }
