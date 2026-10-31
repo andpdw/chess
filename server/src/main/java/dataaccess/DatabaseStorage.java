@@ -140,7 +140,12 @@ public class DatabaseStorage implements DataStorage{
 
     @Override
     public void removeAuthData(String authToken) {
-
+        try {
+            var statement = "DELETE FROM authData WHERE authToken=?";
+            executeUpdate(statement, authToken);
+        } catch (Exception e) {
+            System.out.println("Error deleting auth data: " + e);
+        }
     }
 
     @Override

@@ -91,4 +91,18 @@ public class DatabaseTests {
         Assertions.assertTrue((Objects.equals(answerList.get(1).getUsername(), response.get(0).getUsername())) ||
                 (Objects.equals(answerList.get(1).getUsername(), response.get(1).getUsername())));
     }
+
+    @Test
+    @Order(5)
+    @DisplayName("Remove Auth Data")
+    public void removeAuthDataTest() {
+        AuthData testAuth1 = new AuthData("testUser1");
+
+        Assertions.assertDoesNotThrow(() -> testSQL.setAuthData(testAuth1));
+        Assertions.assertDoesNotThrow(() -> testSQL.removeAuthData(testAuth1.getAuthToken()));
+
+        List<AuthData> response = testSQL.getAllAuthData();
+
+        Assertions.assertTrue(response.isEmpty());
+    }
 }
