@@ -7,6 +7,7 @@ import handler.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 import java.util.Objects;
@@ -14,21 +15,12 @@ import java.util.Objects;
 public class Service {
     private DataStorage dataBase;
 
-    public static void main(String[] args) {
-        //For testing purposes
-        try {
-            DataStorage testDatabase = new DatabaseStorage();
-            UserData testU = new UserData("username", "password", "email");
-            AuthData testA = new AuthData("username");
-            testDatabase.setUserData(testU);
-            testDatabase.setAuthData(testA);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
     public Service() {
-        dataBase = new LocalDataStorage();
+        try {
+            dataBase = new DatabaseStorage();
+        } catch (Exception e) {
+            System.out.println("Error setting up DC: " + e);
+        }
     }
 
     public void clear() {
@@ -55,7 +47,7 @@ public class Service {
             throw new BadRequestException("bad request");
         } else if (dataBase.getUserData(loginData.getUsername()) == null) {
             throw new UnauthorizedException("unauthorized");
-        } else if (!Objects.equals(dataBase.getUserData(loginData.getUsername()).getPassword(), loginData.getPassword())) {
+        } else if (!BCrypt.checkpw(loginData.getPassword(), dataBase.getUserData(loginData.getUsername()).getPassword())) {
             throw new UnauthorizedException("unauthorized");
         } else {
             AuthData authData = new AuthData(loginData.getUsername());
@@ -75,8 +67,7 @@ public class Service {
     public int createGame(String gameName) {
         int gameID = dataBase.getNextGameID();
         GameData gameData = new GameData(gameID, gameName);
-        dataBase.setGameData(gameData);
-        return gameID;
+        return dataBase.setGameData(gameData);
     }
 
     public void joinGame(String authToken, JoinGameData joinGameData) {

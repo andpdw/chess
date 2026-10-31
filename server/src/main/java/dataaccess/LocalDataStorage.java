@@ -28,8 +28,9 @@ public class LocalDataStorage implements DataStorage {
     }
 
     @Override
-    public void setGameData(GameData gameData) {
+    public int setGameData(GameData gameData) {
         gameDataMap.put(gameData.getID(), gameData);
+        return gameData.getID();
     }
 
     @Override

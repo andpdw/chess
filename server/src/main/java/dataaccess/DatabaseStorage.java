@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
+import service.JoinGameData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -26,7 +29,8 @@ public class DatabaseStorage implements DataStorage{
     public void setUserData(UserData userData) {
         try {
             var statement = "INSERT INTO userData (username, password, email, json) VALUES (?, ?, ?, ?)";
-            String password = userData.getPassword(); //Hash later
+            String password = BCrypt.hashpw(userData.getPassword(), BCrypt.gensalt());
+            userData.setPassword(password);
             String json = new Gson().toJson(userData);
             executeUpdate(statement, userData.getUsername(), password, userData.getEmail(), json);
         } catch (Exception e) {
@@ -72,13 +76,32 @@ public class DatabaseStorage implements DataStorage{
     }
 
     @Override
-    public void setGameData(GameData gameData) {
+    public int setGameData(GameData gameData) {
         try {
-            var statement = "INSERT INTO chessGames (id, name, whiteUser, blackUser, json) VALUES (?, ?, ?, ?, ?)";
-            String json = new Gson().toJson(gameData);
-            executeUpdate(statement, gameData.getID(), gameData.getGameName(), gameData.getWhiteUsername(), gameData.getBlackUsername(), json);
+            if (getGameData(gameData.getID()) == null) {
+                var statement = "INSERT INTO chessGames (name, whiteUser, blackUser, json) VALUES (?, ?, ?, ?)";
+                String json = new Gson().toJson(gameData);
+                int gameID = executeUpdate(statement, gameData.getGameName(), gameData.getWhiteUsername(), gameData.getBlackUsername(), json);
+                gameData.setID(gameID);
+                setTeamUser(gameData);
+                return gameID;
+            } else {
+                setTeamUser(gameData);
+            }
         } catch (Exception e) {
             System.out.println("Unable to add gameData: " + e);
+        }
+        return 0;
+    }
+
+    public void setTeamUser(GameData gameData) {
+        try {
+            var statement = "";
+            statement = "UPDATE chessGames SET whiteUser=?, blackUser=?, json=? WHERE id=?";
+            executeUpdate(statement, gameData.getWhiteUsername(), gameData.getBlackUsername(),
+                    new Gson().toJson(gameData), gameData.getID());
+        } catch (Exception e) {
+            System.out.println("Issue joing: " + e);
         }
     }
 

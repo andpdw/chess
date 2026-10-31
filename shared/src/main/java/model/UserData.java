@@ -23,6 +23,10 @@ public class UserData {
         return email;
     }
 
+    public void setPassword(String newPass) {
+        password = newPass;
+    }
+
     public boolean validData() {
         return !(username == null || password == null || email == null || username.isEmpty() || password.isEmpty() || email.isEmpty());
     }

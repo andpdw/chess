@@ -13,7 +13,7 @@ public interface DataStorage {
     UserData getUserData(String username);
     List<UserData> getAllUsers();
 
-    void setGameData(GameData gameData);
+    int setGameData(GameData gameData);
     GameData getGameData(int gameID);
     List<GameData> getAllGames();
     int getNextGameID();

@@ -112,8 +112,8 @@ public class DatabaseTests {
     @DisplayName("Add gameData")
     public void addGameData() {
         GameData testGame = new GameData(2, "testGame");
-        Assertions.assertDoesNotThrow(() -> testSQL.setGameData(testGame));
-        GameData responseGame = testSQL.getGameData(testGame.getID());
+        int gameID = testSQL.setGameData(testGame);
+        GameData responseGame = testSQL.getGameData(gameID);
         Assertions.assertEquals(responseGame.getGameName(), testGame.getGameName());
     }
 
