@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -106,7 +107,21 @@ public class DatabaseStorage implements DataStorage{
 
     @Override
     public List<AuthData> getAllAuthData() {
-        return List.of();
+        List<AuthData> returnList = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM authData";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        returnList.add(new Gson().fromJson(rs.getString("json"), AuthData.class));
+                    }
+                    return returnList;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error getting list of authData: " + e);
+        }
+        return null;
     }
 
     @Override

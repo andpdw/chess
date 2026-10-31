@@ -6,6 +6,10 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DatabaseTests {
     private static DataStorage testSQL;
@@ -44,5 +48,25 @@ public class DatabaseTests {
         Assertions.assertDoesNotThrow(() -> testSQL.setUserData(testUser));
         UserData responseUser = testSQL.getUserData(testUser.getUsername());
         Assertions.assertEquals(responseUser.getPassword(), testUser.getPassword());
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Get AuthData List")
+    public void getAuthDataList() {
+        AuthData testAuth1 = new AuthData("testUser1");
+        AuthData testAuth2 = new AuthData("testUser2");
+        List<AuthData> answerList = new ArrayList<>();
+        answerList.add(testAuth1);
+        answerList.add(testAuth2);
+
+        Assertions.assertDoesNotThrow(() -> testSQL.setAuthData(testAuth1));
+        Assertions.assertDoesNotThrow(() -> testSQL.setAuthData(testAuth2));
+
+
+        Assertions.assertTrue((Objects.equals(answerList.get(0).getUsername(), testSQL.getAllAuthData().get(0).getUsername())) ||
+                (Objects.equals(answerList.get(0).getUsername(), testSQL.getAllAuthData().get(1).getUsername())));
+        Assertions.assertTrue((Objects.equals(answerList.get(1).getUsername(), testSQL.getAllAuthData().get(0).getUsername())) ||
+                (Objects.equals(answerList.get(1).getUsername(), testSQL.getAllAuthData().get(1).getUsername())));
     }
 }
