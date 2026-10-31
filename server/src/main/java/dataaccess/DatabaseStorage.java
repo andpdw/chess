@@ -72,11 +72,30 @@ public class DatabaseStorage implements DataStorage{
 
     @Override
     public void setGameData(GameData gameData) {
-
+        try {
+            var statement = "INSERT INTO chessGames (id, name, whiteUser, blackUser, json) VALUES (?, ?, ?, ?, ?)";
+            String json = new Gson().toJson(gameData);
+            executeUpdate(statement, gameData.getID(), gameData.getGameName(), gameData.getWhiteUsername(), gameData.getBlackUsername(), json);
+        } catch (Exception e) {
+            System.out.println("Unable to add gameData: " + e);
+        }
     }
 
     @Override
     public GameData getGameData(int gameID) {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM chessGames WHERE id=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return new Gson().fromJson(rs.getString("json"), GameData.class);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error getting authData for " + gameID + ", " + e);
+        }
         return null;
     }
 
@@ -209,7 +228,7 @@ public class DatabaseStorage implements DataStorage{
               `name` varchar(256) NOT NULL,
               `whiteUser` varchar(256) DEFAULT NULL,
               `blackUser` varchar(256) DEFAULT NULL,
-              `gamejson` TEXT NOT NULL,
+              `json` TEXT NOT NULL,
               PRIMARY KEY (`id`),
               INDEX(whiteUser),
               INDEX(blackUser)

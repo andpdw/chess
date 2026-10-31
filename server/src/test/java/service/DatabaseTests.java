@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataStorage;
 import dataaccess.DatabaseStorage;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 
@@ -104,5 +105,15 @@ public class DatabaseTests {
         List<AuthData> response = testSQL.getAllAuthData();
 
         Assertions.assertTrue(response.isEmpty());
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Add gameData")
+    public void addGameData() {
+        GameData testGame = new GameData(2, "testGame");
+        Assertions.assertDoesNotThrow(() -> testSQL.setGameData(testGame));
+        GameData responseGame = testSQL.getGameData(testGame.getID());
+        Assertions.assertEquals(responseGame.getGameName(), testGame.getGameName());
     }
 }
