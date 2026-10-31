@@ -16,6 +16,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class DatabaseStorage implements DataStorage{
+    private int nextGameID = 0;
 
     public DatabaseStorage() throws ResponseException, DataAccessException {
         configureDatabase();
@@ -101,12 +102,27 @@ public class DatabaseStorage implements DataStorage{
 
     @Override
     public List<GameData> getAllGames() {
-        return List.of();
+        List<GameData> returnList = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM chessGames";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        returnList.add(new Gson().fromJson(rs.getString("json"), GameData.class));
+                    }
+                    return returnList;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error getting list of gameData: " + e);
+        }
+        return null;
     }
 
     @Override
     public int getNextGameID() {
-        return 0;
+        nextGameID += 1;
+        return nextGameID;
     }
 
     @Override

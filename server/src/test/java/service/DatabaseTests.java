@@ -116,4 +116,25 @@ public class DatabaseTests {
         GameData responseGame = testSQL.getGameData(testGame.getID());
         Assertions.assertEquals(responseGame.getGameName(), testGame.getGameName());
     }
+
+    @Test
+    @Order(7)
+    @DisplayName("Get gameData List")
+    public void getGameDataList() {
+        GameData testGame1 = new GameData(1, "game1");
+        GameData testGame2 = new GameData(2, "game2");
+        List<GameData> answerList = new ArrayList<>();
+        answerList.add(testGame1);
+        answerList.add(testGame2);
+
+        Assertions.assertDoesNotThrow(() -> testSQL.setGameData(testGame1));
+        Assertions.assertDoesNotThrow(() -> testSQL.setGameData(testGame2));
+
+        List<GameData> response = testSQL.getAllGames();
+
+        Assertions.assertTrue((Objects.equals(answerList.get(0).getGameName(), response.get(0).getGameName())) ||
+                (Objects.equals(answerList.get(0).getGameName(), response.get(1).getGameName())));
+        Assertions.assertTrue((Objects.equals(answerList.get(1).getGameName(), response.get(0).getGameName())) ||
+                (Objects.equals(answerList.get(1).getGameName(), response.get(1).getGameName())));
+    }
 }
