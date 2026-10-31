@@ -22,11 +22,11 @@ public class DatabaseStorage implements DataStorage{
     @Override
     public void setUserData(UserData userData) {
         try {
-            var statement = "INSERT INTO userData (username, password, email)";
+            var statement = "INSERT INTO userData (username, password, email) VALUES (?, ?, ?)";
             String password = userData.getPassword(); //Hash later
             executeUpdate(statement, userData.getUsername(), password, userData.getEmail());
         } catch (Exception e) {
-            System.out.print("Unable to add userData");
+            System.out.println("Unable to add userData: " + e);
         }
     }
 
@@ -63,10 +63,10 @@ public class DatabaseStorage implements DataStorage{
     @Override
     public void setAuthData(AuthData authData) {
         try {
-            var statement = "INSERT INTO authData (username, authToken)";
+            var statement = "INSERT INTO authData (username, authToken) VALUES (?, ?)";
             executeUpdate(statement, authData.getUsername(), authData.getAuthToken());
         } catch (Exception e) {
-            System.out.print("Unable to add authData");
+            System.out.println("Unable to add authData: " + e);
         }
     }
 
