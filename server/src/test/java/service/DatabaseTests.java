@@ -63,10 +63,32 @@ public class DatabaseTests {
         Assertions.assertDoesNotThrow(() -> testSQL.setAuthData(testAuth1));
         Assertions.assertDoesNotThrow(() -> testSQL.setAuthData(testAuth2));
 
+        List<AuthData> response = testSQL.getAllAuthData();
 
-        Assertions.assertTrue((Objects.equals(answerList.get(0).getUsername(), testSQL.getAllAuthData().get(0).getUsername())) ||
-                (Objects.equals(answerList.get(0).getUsername(), testSQL.getAllAuthData().get(1).getUsername())));
-        Assertions.assertTrue((Objects.equals(answerList.get(1).getUsername(), testSQL.getAllAuthData().get(0).getUsername())) ||
-                (Objects.equals(answerList.get(1).getUsername(), testSQL.getAllAuthData().get(1).getUsername())));
+        Assertions.assertTrue((Objects.equals(answerList.get(0).getUsername(), response.get(0).getUsername())) ||
+                (Objects.equals(answerList.get(0).getUsername(), response.get(1).getUsername())));
+        Assertions.assertTrue((Objects.equals(answerList.get(1).getUsername(), response.get(0).getUsername())) ||
+                (Objects.equals(answerList.get(1).getUsername(), response.get(1).getUsername())));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Get UserData List")
+    public void getUserDataList() {
+        UserData testUser1 = new UserData("testUser1", "pass", "email");
+        UserData testUser2 = new UserData("testUser2", "pass", "email");
+        List<UserData> answerList = new ArrayList<>();
+        answerList.add(testUser1);
+        answerList.add(testUser2);
+
+        Assertions.assertDoesNotThrow(() -> testSQL.setUserData(testUser1));
+        Assertions.assertDoesNotThrow(() -> testSQL.setUserData(testUser2));
+
+        List<UserData> response = testSQL.getAllUsers();
+
+        Assertions.assertTrue((Objects.equals(answerList.get(0).getUsername(), response.get(0).getUsername())) ||
+                (Objects.equals(answerList.get(0).getUsername(), response.get(1).getUsername())));
+        Assertions.assertTrue((Objects.equals(answerList.get(1).getUsername(), response.get(0).getUsername())) ||
+                (Objects.equals(answerList.get(1).getUsername(), response.get(1).getUsername())));
     }
 }

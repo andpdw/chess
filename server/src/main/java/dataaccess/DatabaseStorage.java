@@ -53,7 +53,21 @@ public class DatabaseStorage implements DataStorage{
 
     @Override
     public List<UserData> getAllUsers() {
-        return List.of();
+        List<UserData> returnList = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM userData";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        returnList.add(new Gson().fromJson(rs.getString("json"), UserData.class));
+                    }
+                    return returnList;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error getting list of userData: " + e);
+        }
+        return null;
     }
 
     @Override
