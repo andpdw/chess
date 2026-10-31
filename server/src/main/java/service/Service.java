@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.DataStorage;
+import dataaccess.DatabaseStorage;
 import dataaccess.LocalDataStorage;
 import handler.UnauthorizedException;
 import model.AuthData;
@@ -12,6 +13,19 @@ import java.util.Objects;
 
 public class Service {
     private DataStorage dataBase;
+
+    public static void main(String[] args) {
+        //For testing purposes
+        try {
+            DataStorage testDatabase = new DatabaseStorage();
+            UserData testU = new UserData("username", "password", "email");
+            AuthData testA = new AuthData("username");
+            testDatabase.setUserData(testU);
+            testDatabase.setAuthData(testA);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
     public Service() {
         dataBase = new LocalDataStorage();
