@@ -1,11 +1,13 @@
-package dataaccess;
+package dataaccess.sql;
 
 import com.google.gson.Gson;
+import dataaccess.ConnectionError;
+import dataaccess.DataAccessException;
+import dataaccess.DataStorage;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import service.JoinGameData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,12 +15,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
-public class DatabaseStorage implements DataStorage{
+public class DatabaseStorage implements DataStorage {
     private int nextGameID = 0;
 
     public DatabaseStorage() {

@@ -2,8 +2,7 @@ package service;
 
 import dataaccess.ConnectionError;
 import dataaccess.DataStorage;
-import dataaccess.DatabaseStorage;
-import dataaccess.LocalDataStorage;
+import dataaccess.sql.DatabaseStorage;
 import handler.UnauthorizedException;
 import model.AuthData;
 import model.GameData;

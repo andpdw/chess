@@ -1,7 +1,6 @@
 package dataaccess.sql;
 
 import dataaccess.DataStorage;
-import dataaccess.DatabaseStorage;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
