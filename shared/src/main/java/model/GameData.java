@@ -19,8 +19,8 @@ public class GameData {
         return gameID;
     }
 
-    public void setID(int ID) {
-        gameID = ID;
+    public void setID(int id) {
+        gameID = id;
     }
 
     public String getGameName() {

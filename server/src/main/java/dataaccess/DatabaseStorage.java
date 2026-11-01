@@ -21,8 +21,12 @@ import static java.sql.Types.NULL;
 public class DatabaseStorage implements DataStorage{
     private int nextGameID = 0;
 
-    public DatabaseStorage() throws ResponseException, DataAccessException {
-        configureDatabase();
+    public DatabaseStorage() {
+        try {
+            configureDatabase();
+        } catch (Exception e) {
+            throw new ConnectionError(e.toString());
+        }
     }
 
     @Override
@@ -290,7 +294,7 @@ public class DatabaseStorage implements DataStorage{
             """
     };
 
-    private void configureDatabase() throws ResponseException, DataAccessException {
+    private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String statement : createStatements) {
