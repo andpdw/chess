@@ -1,4 +1,4 @@
-package service;
+package dataaccess.sql;
 
 import dataaccess.DataStorage;
 import dataaccess.DatabaseStorage;
