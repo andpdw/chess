@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.ConnectionError;
 import dataaccess.DataStorage;
 import dataaccess.DatabaseStorage;
 import dataaccess.LocalDataStorage;
@@ -18,15 +19,21 @@ public class Service {
     public Service() {
         try {
             dataBase = new DatabaseStorage();
+        } catch (ConnectionError e) {
+            throw new ConnectionError(e.toString());
         } catch (Exception e) {
             System.out.println("Error setting up DC: " + e);
         }
     }
 
     public void clear() {
-        dataBase.clearAuthData();
-        dataBase.clearUserData();
-        dataBase.clearGameData();
+        try {
+            dataBase.clearAuthData();
+            dataBase.clearUserData();
+            dataBase.clearGameData();
+        } catch (ConnectionError e) {
+            throw new ConnectionError(e.toString());
+        }
     }
 
     public AuthData registerUser(UserData userData) {
@@ -35,10 +42,14 @@ public class Service {
         } else if (dataBase.getUserData(userData.getUsername()) != null) {
             throw new AlreadyTakenException("already taken");
         } else {
-            AuthData authData = new AuthData(userData.getUsername());
-            dataBase.setUserData(userData);
-            dataBase.setAuthData(authData);
-            return authData;
+            try {
+                AuthData authData = new AuthData(userData.getUsername());
+                dataBase.setUserData(userData);
+                dataBase.setAuthData(authData);
+                return authData;
+            } catch (ConnectionError e) {
+                throw new ConnectionError(e.toString());
+            }
         }
     }
 
@@ -50,24 +61,40 @@ public class Service {
         } else if (!BCrypt.checkpw(loginData.getPassword(), dataBase.getUserData(loginData.getUsername()).getPassword())) {
             throw new UnauthorizedException("unauthorized");
         } else {
-            AuthData authData = new AuthData(loginData.getUsername());
-            dataBase.setAuthData(authData);
-            return authData;
+            try {
+                AuthData authData = new AuthData(loginData.getUsername());
+                dataBase.setAuthData(authData);
+                return authData;
+            } catch (ConnectionError e) {
+                throw new ConnectionError(e.toString());
+            }
         }
     }
 
     public void logoutUser(String authToken) {
-        dataBase.removeAuthData(authToken);
+        try {
+            dataBase.removeAuthData(authToken);
+        } catch (ConnectionError e) {
+            throw new ConnectionError(e.toString());
+        }
     }
 
     public List<GameData> listGames() {
-        return dataBase.getAllGames();
+        try {
+            return dataBase.getAllGames();
+        } catch (ConnectionError e) {
+            throw new ConnectionError(e.toString());
+        }
     }
 
     public int createGame(String gameName) {
-        int gameID = dataBase.getNextGameID();
-        GameData gameData = new GameData(gameID, gameName);
-        return dataBase.setGameData(gameData);
+        try {
+            int gameID = dataBase.getNextGameID();
+            GameData gameData = new GameData(gameID, gameName);
+            return dataBase.setGameData(gameData);
+        } catch (ConnectionError e) {
+            throw new ConnectionError(e.toString());
+        }
     }
 
     public void joinGame(String authToken, JoinGameData joinGameData) {
@@ -94,12 +121,19 @@ public class Service {
                 throw new AlreadyTakenException("already taken");
             }
         }
-
-        dataBase.setGameData(gameData);
+        try {
+            dataBase.setGameData(gameData);
+        } catch (ConnectionError e) {
+            throw new ConnectionError(e.toString());
+        }
     }
 
     public boolean authorized(String authToken) {
-        AuthData authData = dataBase.getAuthData(authToken);
-        return authData != null && authData.validToken();
+        try {
+            AuthData authData = dataBase.getAuthData(authToken);
+            return authData != null && authData.validToken();
+        } catch (ConnectionError e) {
+            throw new ConnectionError(e.toString());
+        }
     }
 }

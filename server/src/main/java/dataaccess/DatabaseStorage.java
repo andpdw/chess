@@ -34,7 +34,7 @@ public class DatabaseStorage implements DataStorage{
             String json = new Gson().toJson(userData);
             executeUpdate(statement, userData.getUsername(), password, userData.getEmail(), json);
         } catch (Exception e) {
-            System.out.println("Unable to add userData: " + e);
+            throw new ConnectionError(e.toString());
         }
     }
 
@@ -51,7 +51,7 @@ public class DatabaseStorage implements DataStorage{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error getting authData for " + username + ", " + e);
+            throw new ConnectionError(e.toString());
         }
         return null;
     }
@@ -70,9 +70,8 @@ public class DatabaseStorage implements DataStorage{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error getting list of userData: " + e);
+            throw new ConnectionError(e.toString());
         }
-        return null;
     }
 
     @Override
@@ -89,7 +88,7 @@ public class DatabaseStorage implements DataStorage{
                 setTeamUser(gameData);
             }
         } catch (Exception e) {
-            System.out.println("Unable to add gameData: " + e);
+            throw new ConnectionError(e.toString());
         }
         return 0;
     }
@@ -101,7 +100,7 @@ public class DatabaseStorage implements DataStorage{
             executeUpdate(statement, gameData.getWhiteUsername(), gameData.getBlackUsername(),
                     new Gson().toJson(gameData), gameData.getID());
         } catch (Exception e) {
-            System.out.println("Issue joing: " + e);
+            throw new ConnectionError(e.toString());
         }
     }
 
@@ -118,7 +117,7 @@ public class DatabaseStorage implements DataStorage{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error getting authData for " + gameID + ", " + e);
+            throw new ConnectionError(e.toString());
         }
         return null;
     }
@@ -137,9 +136,8 @@ public class DatabaseStorage implements DataStorage{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error getting list of gameData: " + e);
+            throw new ConnectionError(e.toString());
         }
-        return null;
     }
 
     @Override
@@ -155,7 +153,7 @@ public class DatabaseStorage implements DataStorage{
             String json = new Gson().toJson(authData);
             executeUpdate(statement, authData.getUsername(), authData.getAuthToken(), json);
         } catch (Exception e) {
-            System.out.println("Unable to add authData: " + e);
+            throw new ConnectionError(e.toString());
         }
     }
 
@@ -172,7 +170,7 @@ public class DatabaseStorage implements DataStorage{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error getting authData for " + authToken + ", " + e);
+            throw new ConnectionError(e.toString());
         }
         return null;
     }
@@ -191,9 +189,8 @@ public class DatabaseStorage implements DataStorage{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error getting list of authData: " + e);
+            throw new ConnectionError(e.toString());
         }
-        return null;
     }
 
     @Override
@@ -202,7 +199,7 @@ public class DatabaseStorage implements DataStorage{
             var statement = "DELETE FROM authData WHERE authToken=?";
             executeUpdate(statement, authToken);
         } catch (Exception e) {
-            System.out.println("Error deleting auth data: " + e);
+            throw new ConnectionError(e.toString());
         }
     }
 
@@ -212,7 +209,7 @@ public class DatabaseStorage implements DataStorage{
         try {
             executeUpdate(statement);
         } catch (Exception e) {
-            System.out.println("Error deleting userData: " + e);
+            throw new ConnectionError(e.toString());
         }
     }
 
@@ -222,7 +219,7 @@ public class DatabaseStorage implements DataStorage{
         try {
             executeUpdate(statement);
         } catch (Exception e) {
-            System.out.println("Error deleting gameData: " + e);
+            throw new ConnectionError(e.toString());
         }
     }
 
@@ -232,11 +229,11 @@ public class DatabaseStorage implements DataStorage{
         try {
             executeUpdate(statement);
         } catch (Exception e) {
-            System.out.println("Error deleting authData: " + e);
+            throw new ConnectionError(e.toString());
         }
     }
 
-    private int executeUpdate(String statement, Object... params) throws ResponseException, DataAccessException {
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
@@ -256,7 +253,7 @@ public class DatabaseStorage implements DataStorage{
                 return 0;
             }
         } catch (SQLException e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+            throw new ConnectionError(e.toString());
         }
     }
 
@@ -301,8 +298,8 @@ public class DatabaseStorage implements DataStorage{
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to configure database: %s", ex.getMessage()));
+        } catch (SQLException e) {
+            throw new ConnectionError(e.toString());
         }
     }
 }

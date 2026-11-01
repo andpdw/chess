@@ -1,5 +1,7 @@
 package handler;
 
+import dataaccess.ConnectionError;
+import kotlin.TuplesKt;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -13,44 +15,80 @@ public class HandlerClass {
     private Service service;
 
     public HandlerClass() {
-        service = new Service();
+        try {
+            service = new Service();
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
+        }
     }
 
     public void clear() {
-        service.clear();
+        try {
+            service.clear();
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
+        }
     }
 
     public AuthData registerUser(UserData userData) {
-        return service.registerUser(userData);
+        try {
+            return service.registerUser(userData);
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
+        }
     }
 
     public AuthData loginUser(LoginData loginData) {
-        return service.loginUser(loginData);
+        try {
+            return service.loginUser(loginData);
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
+        }
     }
 
     public void logoutUser(String authToken) {
-        checkIfAuthorized(authToken);
-        service.logoutUser(authToken);
+        try {
+            checkIfAuthorized(authToken);
+            service.logoutUser(authToken);
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
+        }
     }
 
     public List<GameData> listGames(String authToken) {
-        checkIfAuthorized(authToken);
-        return service.listGames();
+        try {
+            checkIfAuthorized(authToken);
+            return service.listGames();
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
+        }
     }
 
     public int createGame(String authToken, String gameName) {
-        checkIfAuthorized(authToken);
-        return service.createGame(gameName);
+        try {
+            checkIfAuthorized(authToken);
+            return service.createGame(gameName);
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
+        }
     }
 
     public void joinGame(String authToken, JoinGameData joinGameData) {
-        checkIfAuthorized(authToken);
-        service.joinGame(authToken, joinGameData);
+        try {
+            checkIfAuthorized(authToken);
+            service.joinGame(authToken, joinGameData);
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
+        }
     }
 
     public void checkIfAuthorized(String authToken) {
-        if (!service.authorized(authToken)) {
-            throw new UnauthorizedException("unauthorized");
+        try {
+            if (!service.authorized(authToken)) {
+                throw new UnauthorizedException("unauthorized");
+            }
+        } catch (ConnectionError e) {
+            throw new ConnectionError(toString());
         }
     }
 }

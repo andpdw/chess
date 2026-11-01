@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.ConnectionError;
 import service.AlreadyTakenException;
 import handler.HandlerClass;
 import service.BadRequestException;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 public class Server {
     private HandlerClass handler;
-    private LocalDataStorage dataStorage = new LocalDataStorage();
+    //private LocalDataStorage dataStorage = new LocalDataStorage();
 
     private final Javalin javalin;
 
