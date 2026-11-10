@@ -38,10 +38,34 @@ public class ChessClient {
                     register(params);
                 } else if (command.equals("logout")) {
                     logout();
+                } else if (command.equals("help")) {
+                    help();
+                } else if (command.equals("quit")) {
+                    break;
+                } else {
+                    System.out.println("Unknown command, please try again or type \"help\" for more options");
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
+        }
+    }
+
+    public void help() {
+        if (loggedIn) {
+            System.out.print("" +
+                    "\thelp\t- list possible commands\n" +
+                    "\tlogout\t- logout of client\n" +
+                    "\tcreate <NAME> \t- create a game\n" +
+                    "\tlist\t- lists current games\n" +
+                    "\tjoin <ID> <WHITE|BLACK>\t- join game with id and color\n" +
+                    "\tobserve <ID>\t- observe game with id\n\n");
+        } else {
+            System.out.print("" +
+                    "\thelp\t- list possible commands\n" +
+                    "\tquit\t- exit the program\n" +
+                    "\tlogin <USERNAME> <PASSWORD>\t- login to user\n" +
+                    "\tregister <USERNAME> <PASSWORD> <EMAIL>\t- register a new account\n\n");
         }
     }
 
