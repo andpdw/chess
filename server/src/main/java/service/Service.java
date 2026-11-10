@@ -4,9 +4,7 @@ import dataaccess.ConnectionError;
 import dataaccess.DataStorage;
 import dataaccess.sql.DatabaseStorage;
 import handler.UnauthorizedException;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import model.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;

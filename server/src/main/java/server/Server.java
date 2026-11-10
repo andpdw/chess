@@ -1,18 +1,16 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.ConnectionError;
 import service.AlreadyTakenException;
 import handler.HandlerClass;
 import service.BadRequestException;
-import dataaccess.LocalDataStorage;
 import handler.UnauthorizedException;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.GameData;
-import service.JoinGameData;
-import service.LoginData;
+import model.JoinGameData;
+import model.LoginData;
 import model.UserData;
 
 import java.util.List;

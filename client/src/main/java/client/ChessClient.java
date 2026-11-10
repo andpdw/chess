@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.LoginData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 
@@ -36,6 +37,8 @@ public class ChessClient {
                     clear();
                 } else if (command.equals("register")) {
                     register(params);
+                } else if (command.equals("login")) {
+                    login(params);
                 } else if (command.equals("logout")) {
                     logout();
                 } else if (command.equals("help")) {
@@ -78,6 +81,23 @@ public class ChessClient {
         try {
             UserData userData = new UserData(params[0], params[1], params[2]);
             AuthData authData = server.registerUser(userData);
+            authToken = authData.getAuthToken();
+            loggedIn = Boolean.TRUE;
+            System.out.println("Registered the user " + params[0]);
+        } catch (ResponseException e) {
+            System.out.println(errorJsonToString(e.getMessage()));
+        }
+    }
+
+    public void login(String... params) {
+        isLoggedOut();
+        if (params.length != 2) {
+            throw new InvalidParameters("Incorrect number of parameters");
+        }
+
+        try {
+            LoginData loginData = new LoginData(params[0], params[1]);
+            AuthData authData = server.loginUser(loginData);
             authToken = authData.getAuthToken();
             loggedIn = Boolean.TRUE;
             System.out.println("Logged in to the user " + params[0]);

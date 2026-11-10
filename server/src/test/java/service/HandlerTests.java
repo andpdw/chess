@@ -3,6 +3,8 @@ package service;
 import handler.HandlerClass;
 import handler.UnauthorizedException;
 import model.AuthData;
+import model.JoinGameData;
+import model.LoginData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 

@@ -2,10 +2,10 @@ package service;
 
 import handler.UnauthorizedException;
 import model.AuthData;
+import model.JoinGameData;
+import model.LoginData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
-import service.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServiceTests {

@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.LoginData;
 import model.UserData;
 
 import java.net.URI;
@@ -34,6 +35,12 @@ public class ServerFacade {
     public void logoutUser(String authToken) throws ResponseException {
         var request = buildRequest("DELETE", "/session", null, authToken);
         sendRequest(request);
+    }
+
+    public AuthData loginUser(LoginData loginData) {
+        var request = buildRequest("POST", "/session", loginData, null);
+        var response = sendRequest(request);
+        return handleResponse(response, AuthData.class);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {

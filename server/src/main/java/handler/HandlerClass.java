@@ -1,12 +1,11 @@
 package handler;
 
 import dataaccess.ConnectionError;
-import kotlin.TuplesKt;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import service.JoinGameData;
-import service.LoginData;
+import model.JoinGameData;
+import model.LoginData;
 import service.Service;
 
 import java.util.List;
