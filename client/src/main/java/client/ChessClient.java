@@ -18,12 +18,19 @@ public class ChessClient {
         while (!line.equals("quit")) {
 
             line = scanner.nextLine();
-
+            String response = "";
             try {
                 System.out.println("Got: " + line);
+                if (line.equals("clear")) {
+                    System.out.println("Cleared DB");
+                }
             } catch (Exception e) {
                 System.out.println("Got the error: " + e.getMessage());
             }
         }
+    }
+
+    public void clear() {
+        server.clearDatabase();
     }
 }
