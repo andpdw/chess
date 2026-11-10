@@ -1,6 +1,8 @@
 package client;
 
 import com.google.gson.Gson;
+import model.AuthData;
+import model.UserData;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -19,14 +21,28 @@ public class ServerFacade {
     }
 
     public void clearDatabase() {
-        var request = buildRequest("DELETE", "/db", null);
+        var request = buildRequest("DELETE", "/db", null, null);
         sendRequest(request);
     }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    public AuthData registerUser(UserData userData) {
+        var request = buildRequest("POST", "/user", userData, null);
+        var response = sendRequest(request);
+        return handleResponse(response, AuthData.class);
+    }
+
+    public void logoutUser(String authToken) {
+        var request = buildRequest("DELETE", "/session", null, authToken);
+        sendRequest(request);
+    }
+
+    private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
+        if (authToken != null) {
+            request.header("authorization", authToken);
+        }
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
@@ -48,5 +64,28 @@ public class ServerFacade {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+
+    private <T> T handleResponse(HttpResponse<String> reponse, Class<T> responseClass) {
+        if (reponse == null) {
+            System.out.println("Did not get a response");
+            return null;
+        }
+
+        var status = reponse.statusCode();
+        if (status != 200) {
+            var body = reponse.body();
+            if (body != null) {
+                System.out.println("Error in response: " + body);
+            }
+
+            System.out.println("Error in response, no body");
+        }
+
+        if (responseClass != null) {
+            return new Gson().fromJson(reponse.body(), responseClass);
+        }
+
+        return null;
     }
 }
