@@ -15,6 +15,8 @@ public class ChessClient {
     private ServerFacade server;
     private String authToken;
     private Boolean loggedIn = Boolean.FALSE;
+    private Map<Integer, Integer> gameIdMapping;
+    private Integer clientGameIdCount = 1;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -35,12 +37,15 @@ public class ChessClient {
             try {
                 if (command.equals("clear")) {
                     clear();
+                    System.out.println("DB has been cleared");
                 } else if (command.equals("register")) {
                     register(params);
                 } else if (command.equals("login")) {
                     login(params);
                 } else if (command.equals("logout")) {
                     logout();
+                } else if (command.equals("create")) {
+                    createGame(params);
                 } else if (command.equals("help")) {
                     help();
                 } else if (command.equals("quit")) {
@@ -113,6 +118,22 @@ public class ChessClient {
             server.logoutUser(authToken);
             loggedIn = Boolean.FALSE;
             System.out.println("You have been logged out");
+        } catch (ResponseException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void createGame(String... params) {
+        isLoggedIn();
+        if (params.length != 1) {
+            throw new InvalidParameters("Incorrect number of parameters");
+        }
+
+        try {
+            Integer gameID = server.createGame(params[0], authToken);
+            gameIdMapping.put(clientGameIdCount, gameID);
+            System.out.println("Created game with ID of " + String.valueOf(clientGameIdCount));
+            clientGameIdCount++;
         } catch (ResponseException e) {
             System.out.println(e.getMessage());
         }

@@ -12,6 +12,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Map;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -41,6 +42,14 @@ public class ServerFacade {
         var request = buildRequest("POST", "/session", loginData, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
+    }
+
+    public int createGame(String gameName, String authToken) {
+        Map<String, String> data = Map.of("gameName", gameName);
+        var request = buildRequest("POST", "/game", data, authToken);
+        var response = sendRequest(request);
+        Number gameID = (Number) handleResponse(response, Map.class).get("gameID");
+        return gameID.intValue();
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {

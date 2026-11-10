@@ -61,5 +61,12 @@ public class ServerFacadeTests {
         Assertions.assertThrows(ResponseException.class, () -> serverFacade.loginUser(badData));
     }
 
+    @Test
+    @DisplayName("Create Game")
+    public void createGame() {
+        UserData userData = new UserData("user", "pass", "email");
+        AuthData authData = serverFacade.registerUser(userData);
+        Assertions.assertDoesNotThrow(() -> serverFacade.createGame("game", authData.getAuthToken()));
+    }
 
 }

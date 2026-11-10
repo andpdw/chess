@@ -135,7 +135,7 @@ public class Server {
 
             Map<String, String> bodyObject = getBodyObject(ctx, Map.class);
             if (bodyObject.get("gameName") == null || bodyObject.get("gameName").isEmpty()) {
-                throw new BadRequestException("bad request");
+                throw new BadRequestException("Missing game name");
             } else {
                 gameName = bodyObject.get("gameName");
             }
