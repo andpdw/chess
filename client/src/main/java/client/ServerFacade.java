@@ -2,10 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import model.AuthData;
-import model.GameData;
-import model.LoginData;
-import model.UserData;
+import model.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -61,6 +58,12 @@ public class ServerFacade {
         var response = sendRequest(request);
         ListGamesResponse reply = handleResponse(response, ListGamesResponse.class);
         return reply.games;
+    }
+
+    public void joinGame(JoinGameData joinGameData, String authToken) {
+        var request = buildRequest("PUT", "/game", joinGameData, authToken);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     private static class ListGamesResponse {

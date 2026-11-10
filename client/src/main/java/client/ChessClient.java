@@ -1,10 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
-import model.AuthData;
-import model.GameData;
-import model.LoginData;
-import model.UserData;
+import model.*;
 import org.eclipse.jetty.server.Authentication;
 
 import java.util.*;
@@ -16,10 +13,12 @@ public class ChessClient {
     private Boolean loggedIn = Boolean.FALSE;
     private Map<Integer, Integer> gameIdMapping;
     private Integer clientGameIdCount = 1;
+    private Boolean scannedGames;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         gameIdMapping = new HashMap<>();
+        scannedGames = false;
     }
 
     public void run() {
@@ -48,6 +47,8 @@ public class ChessClient {
                     createGame(params);
                 } else if (command.equals("list")) {
                     listGames();
+                } else if (command.equals("join")) {
+                    joinGame(params);
                 } else if (command.equals("help")) {
                     help();
                 } else if (command.equals("quit")) {
@@ -165,8 +166,48 @@ public class ChessClient {
                     }
                 }
             }
+            scannedGames = true;
         } catch (ResponseException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void joinGame(String... params) {
+        isLoggedIn();
+        if (!scannedGames) {
+            throw new InvalidParameters("Must run list games before joining a game");
+        }
+        if (params.length != 2) {
+            throw new InvalidParameters("Incorrect number of parameters");
+        }
+        Integer gameID = gameIdMapping.get(Integer.parseInt(params[0]));
+        if (gameID == null) {
+            throw new InvalidParameters("Could not find a game with that ID");
+        }
+
+        try {
+            String color = null;
+            if (Objects.equals(params[1], "white")) {
+                color = "WHITE";
+            } else if (Objects.equals(params[1], "black")) {
+                color = "BLACK";
+            }
+            JoinGameData joinGameData = new JoinGameData(color, gameID);
+            server.joinGame(joinGameData, authToken);
+            List<GameData> gameDataList = server.listGames(authToken);
+            GameData gameData = null;
+            for (GameData game : gameDataList) {
+                if (game.getID() == gameIdMapping.get(gameID)) {
+                    gameData = game;
+                    break;
+                }
+            }
+            if (gameData == null) {
+                throw new InvalidParameters("Could not find a game with that ID");
+            }
+            System.out.println(displayBoard(params[1], gameData));
+        } catch (ResponseException e) {
+            System.out.println(errorJsonToString(e.getMessage()));
         }
     }
 
@@ -192,6 +233,10 @@ public class ChessClient {
                 "\tWhite Player: " + whiteUser + "\n" +
                 "\tBlack Player: " + blackUser + "\n";
         return out;
+    }
+
+    public String displayBoard(String playerColor, GameData gameData) {
+        return "Board joined";
     }
 
     public void isLoggedIn() {
