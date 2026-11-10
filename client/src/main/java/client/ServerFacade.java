@@ -1,7 +1,9 @@
 package client;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import model.AuthData;
+import model.GameData;
 import model.LoginData;
 import model.UserData;
 
@@ -12,6 +14,8 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ServerFacade {
@@ -50,6 +54,17 @@ public class ServerFacade {
         var response = sendRequest(request);
         Number gameID = (Number) handleResponse(response, Map.class).get("gameID");
         return gameID.intValue();
+    }
+
+    public List<GameData> listGames(String authToken) {
+        var request = buildRequest("GET", "/game", null, authToken);
+        var response = sendRequest(request);
+        ListGamesResponse reply = handleResponse(response, ListGamesResponse.class);
+        return reply.games;
+    }
+
+    private static class ListGamesResponse {
+        List<GameData> games;
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {

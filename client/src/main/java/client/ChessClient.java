@@ -2,13 +2,12 @@ package client;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.GameData;
 import model.LoginData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class ChessClient {
 
@@ -20,6 +19,7 @@ public class ChessClient {
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
+        gameIdMapping = new HashMap<>();
     }
 
     public void run() {
@@ -46,6 +46,8 @@ public class ChessClient {
                     logout();
                 } else if (command.equals("create")) {
                     createGame(params);
+                } else if (command.equals("list")) {
+                    listGames();
                 } else if (command.equals("help")) {
                     help();
                 } else if (command.equals("quit")) {
@@ -139,12 +141,57 @@ public class ChessClient {
         }
     }
 
+    public void listGames() {
+        isLoggedIn();
+
+        try {
+            List<GameData> gameDataList = server.listGames(authToken);
+            List<Integer> foundGameIds = new ArrayList<>();
+            for (Integer key : gameIdMapping.keySet()) {
+                for (GameData game : gameDataList) {
+                    if (gameIdMapping.get(key) == game.getID()) {
+                        System.out.println(showGameData(key, game));
+                        foundGameIds.add(game.getID());
+                        break;
+                    }
+                }
+            }
+            if (foundGameIds.size() != gameDataList.size()) {
+                for (GameData game : gameDataList) {
+                    if (!foundGameIds.contains(game.getID())) {
+                        gameIdMapping.put(clientGameIdCount, game.getID());
+                        System.out.println(showGameData(clientGameIdCount, game));
+                        clientGameIdCount++;
+                    }
+                }
+            }
+        } catch (ResponseException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void clear() {
         try {
             server.clearDatabase();
         } catch (ResponseException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public String showGameData(Integer visibleID, GameData gameData) {
+        String out = "";
+        String whiteUser = gameData.getWhiteUsername();
+        String blackUser = gameData.getBlackUsername();
+        if (whiteUser == null) {
+            whiteUser = "None";
+        }
+        if (blackUser == null) {
+            blackUser = "None";
+        }
+        out += "Game ID: " + visibleID + "\nGame Name: " + gameData.getGameName() + "\n" +
+                "\tWhite Player: " + whiteUser + "\n" +
+                "\tBlack Player: " + blackUser + "\n";
+        return out;
     }
 
     public void isLoggedIn() {
