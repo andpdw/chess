@@ -1,10 +1,12 @@
 package client;
 
+import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -18,7 +20,7 @@ public class ChessClient {
     }
 
     public void run() {
-        System.out.println("Welecome to my chess game! Sign in or register to start.");
+        System.out.println("Welcome to my chess game! Sign in or register to start.");
 
         Scanner scanner  = new Scanner(System.in);
         var line = "";
@@ -30,45 +32,74 @@ public class ChessClient {
             String command = input[0];
 
             try {
-                System.out.println("Got: " + line);
-
                 if (command.equals("clear")) {
-                    System.out.println("Cleared DB");
+                    clear();
                 } else if (command.equals("register")) {
                     register(params);
                 } else if (command.equals("logout")) {
                     logout();
                 }
             } catch (Exception e) {
-                System.out.println("Got the error: " + e.getMessage());
+                System.out.println(e.getMessage());
             }
         }
     }
 
     public void register(String... params) {
+        isLoggedOut();
         if (params.length != 3) {
-            System.out.println("Invalid arguments");
-            return;
+            throw new InvalidParameters("Incorrect number of parameters");
         }
 
-        UserData userData = new UserData(params[0], params[1], params[2]);
-        AuthData authData = server.registerUser(userData);
-        authToken = authData.getAuthToken();
-        loggedIn = Boolean.TRUE;
-        System.out.println("Logged in, got auth token: " + authToken);
+        try {
+            UserData userData = new UserData(params[0], params[1], params[2]);
+            AuthData authData = server.registerUser(userData);
+            authToken = authData.getAuthToken();
+            loggedIn = Boolean.TRUE;
+            System.out.println("Logged in to the user " + params[0]);
+        } catch (ResponseException e) {
+            System.out.println(errorJsonToString(e.getMessage()));
+        }
     }
 
     public void logout() {
-        if (!loggedIn) {
-            System.out.println("Mused be logged in to log out");
-            return;
+        isLoggedIn();
+
+        try {
+            server.logoutUser(authToken);
+            loggedIn = Boolean.FALSE;
+            System.out.println("You have been logged out");
+        } catch (ResponseException e) {
+            System.out.println(e.getMessage());
         }
-        System.out.println("Logged out");
-        server.logoutUser(authToken);
-        loggedIn = Boolean.FALSE;
     }
 
     public void clear() {
-        server.clearDatabase();
+        try {
+            server.clearDatabase();
+        } catch (ResponseException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void isLoggedIn() {
+        if (!loggedIn) {
+            throw new UnauthorizedException("You must be logged in to do that action");
+        }
+    }
+
+    public void isLoggedOut() {
+        if (loggedIn) {
+            throw new UnauthorizedException("Action is not accessible while logged in.");
+        }
+    }
+
+    public String errorJsonToString(String json) {
+        Map<String, String> map  = new Gson().fromJson(json, Map.class);
+        if (map.get("message") != null) {
+            return map.get("message");
+        } else {
+            return json;
+        }
     }
 }

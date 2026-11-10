@@ -13,25 +13,25 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
 public class ServerFacade {
-    private String serverUrl;
-    private HttpClient client = HttpClient.newHttpClient();
+    private final String serverUrl;
+    private final HttpClient client = HttpClient.newHttpClient();
 
     public ServerFacade(String url) {
         serverUrl = url;
     }
 
-    public void clearDatabase() {
+    public void clearDatabase() throws ResponseException {
         var request = buildRequest("DELETE", "/db", null, null);
         sendRequest(request);
     }
 
-    public AuthData registerUser(UserData userData) {
+    public AuthData registerUser(UserData userData) throws ResponseException {
         var request = buildRequest("POST", "/user", userData, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
-    public void logoutUser(String authToken) {
+    public void logoutUser(String authToken) throws ResponseException {
         var request = buildRequest("DELETE", "/session", null, authToken);
         sendRequest(request);
     }
@@ -66,26 +66,25 @@ public class ServerFacade {
         }
     }
 
-    private <T> T handleResponse(HttpResponse<String> reponse, Class<T> responseClass) {
-        if (reponse == null) {
-            System.out.println("Did not get a response");
-            return null;
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) {
+        if (response == null) {
+            throw new ServerConnectionException("Did not get a response from the server");
         }
 
-        var status = reponse.statusCode();
-        if (status != 200) {
-            var body = reponse.body();
-            if (body != null) {
-                System.out.println("Error in response: " + body);
+        var status = response.statusCode();
+        if (status == 200) {
+            if (responseClass != null) {
+                return new Gson().fromJson(response.body(), responseClass);
             }
-
-            System.out.println("Error in response, no body");
+            return null;
+        } else {
+            var body = response.body();
+            if (body != null) {
+                throw new ResponseException(body);
+            }
+            throw new ResponseException("No body sent in response");
         }
 
-        if (responseClass != null) {
-            return new Gson().fromJson(reponse.body(), responseClass);
-        }
 
-        return null;
     }
 }

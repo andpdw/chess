@@ -39,7 +39,7 @@ public class Service {
         if (!userData.validData()) {
             throw new BadRequestException("bad request");
         } else if (dataBase.getUserData(userData.getUsername()) != null) {
-            throw new AlreadyTakenException("already taken");
+            throw new AlreadyTakenException("Username is already taken");
         } else {
             try {
                 AuthData authData = new AuthData(userData.getUsername());
@@ -56,9 +56,9 @@ public class Service {
         if (!loginData.validData()) {
             throw new BadRequestException("bad request");
         } else if (dataBase.getUserData(loginData.getUsername()) == null) {
-            throw new UnauthorizedException("unauthorized");
+            throw new UnauthorizedException("Unable to find account matching the username");
         } else if (!BCrypt.checkpw(loginData.getPassword(), dataBase.getUserData(loginData.getUsername()).getPassword())) {
-            throw new UnauthorizedException("unauthorized");
+            throw new UnauthorizedException("Incorrect password");
         } else {
             try {
                 AuthData authData = new AuthData(loginData.getUsername());
@@ -102,7 +102,7 @@ public class Service {
         }
         GameData gameData = dataBase.getGameData(joinGameData.getGameID());
         if (gameData == null) {
-            throw new BadRequestException("bad request");
+            throw new BadRequestException("Unable to find matching gameID");
         }
 
         String userName = dataBase.getAuthData(authToken).getUsername();
@@ -111,13 +111,13 @@ public class Service {
             if (gameData.getWhiteUsername() == null || gameData.getWhiteUsername().isEmpty()) {
                 gameData.setWhiteUserName(userName);
             } else {
-                throw new AlreadyTakenException("already taken");
+                throw new AlreadyTakenException("Player already taken");
             }
         } else if (Objects.equals(joinGameData.getPlayerColor(), "BLACK")) {
             if (gameData.getBlackUsername() == null || gameData.getBlackUsername().isEmpty()) {
                 gameData.setBlackUserName(userName);
             } else {
-                throw new AlreadyTakenException("already taken");
+                throw new AlreadyTakenException("Player already taken");
             }
         }
         try {
