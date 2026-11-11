@@ -3,6 +3,7 @@ package client;
 import com.google.gson.Gson;
 import model.*;
 import org.eclipse.jetty.server.Authentication;
+import org.junit.jupiter.api.IndicativeSentencesGeneration;
 
 import java.util.*;
 
@@ -49,6 +50,8 @@ public class ChessClient {
                     listGames();
                 } else if (command.equals("join")) {
                     joinGame(params);
+                } else if (command.equals("observe")) {
+                    observeGame(params);
                 } else if (command.equals("help")) {
                     help();
                 } else if (command.equals("quit")) {
@@ -208,6 +211,35 @@ public class ChessClient {
             System.out.println(displayBoard(params[1], gameData));
         } catch (ResponseException e) {
             System.out.println(errorJsonToString(e.getMessage()));
+        }
+    }
+
+    public void observeGame(String... params) {
+        isLoggedIn();
+        if (!scannedGames) {
+            throw new InvalidParameters("Must run list games before joining a game");
+        }
+        if (params.length != 1) {
+            throw new InvalidParameters("Incorrect number of parameters for that command");
+        }
+
+        Integer internalGameId;
+        try {
+            internalGameId = gameIdMapping.get(Integer.parseInt(params[0]));
+        } catch (Exception e) {
+            throw new InvalidParameters("Invalid gameID");
+        }
+
+        try {
+            List<GameData> gameDataList = server.listGames(authToken);
+            for (GameData game : gameDataList) {
+                if (internalGameId == game.getID()) {
+                    System.out.println("Observing the following game:");
+                    System.out.println(displayBoard(null, game));
+                }
+            }
+        } catch (ResponseException e) {
+            System.out.println(e.getMessage());
         }
     }
 
