@@ -159,28 +159,28 @@ public class ChessClient {
             List<GameData> gameDataList = server.listGames(authToken);
             if (gameDataList.isEmpty()) {
                 System.out.println("There are currently no games in the database. Use create command to make new game.");
-            } else {
-                List<Integer> foundGameIds = new ArrayList<>();
-                for (Integer key : gameIdMapping.keySet()) {
-                    for (GameData game : gameDataList) {
-                        if (gameIdMapping.get(key) == game.getID()) {
-                            System.out.println(showGameData(key, game));
-                            foundGameIds.add(game.getID());
-                            break;
-                        }
-                    }
-                }
-                if (foundGameIds.size() != gameDataList.size()) {
-                    for (GameData game : gameDataList) {
-                        if (!foundGameIds.contains(game.getID())) {
-                            gameIdMapping.put(clientGameIdCount, game.getID());
-                            System.out.println(showGameData(clientGameIdCount, game));
-                            clientGameIdCount++;
-                        }
-                    }
-                }
-                scannedGames = true;
+                return;
             }
+            List<Integer> foundGameIds = new ArrayList<>();
+            for (Integer key : gameIdMapping.keySet()) {
+                for (GameData game : gameDataList) {
+                    if (gameIdMapping.get(key) == game.getID()) {
+                        System.out.println(showGameData(key, game));
+                        foundGameIds.add(game.getID());
+                        break;
+                    }
+                }
+            }
+            if (foundGameIds.size() != gameDataList.size()) {
+                for (GameData game : gameDataList) {
+                    if (!foundGameIds.contains(game.getID())) {
+                        gameIdMapping.put(clientGameIdCount, game.getID());
+                        System.out.println(showGameData(clientGameIdCount, game));
+                        clientGameIdCount++;
+                    }
+                }
+            }
+            scannedGames = true;
         } catch (ResponseException e) {
             System.out.println(e.getMessage());
         }
@@ -290,7 +290,7 @@ public class ChessClient {
         List<String> colVal = new ArrayList<>(List.of("h", "g", "f", "e", "d", "c", "b", "a"));
         String boardColor = "\u001b[30;47;1m";
         String endColorCode = "\u001b[0m";
-        boardSpace currentSpace = boardSpace.LIGHT;
+        BoardSpace currentSpace = BoardSpace.LIGHT;
 
         if (playerColor == null || playerColor.equals("WHITE")) {
             count = 8;
@@ -342,7 +342,7 @@ public class ChessClient {
         return " " + val + " ";
     }
 
-    public String setBoardSpace(ChessPiece piece, boardSpace space) {
+    public String setBoardSpace(ChessPiece piece, BoardSpace space) {
         String escapeSeq = "\u001b[";
         String blackForeground = "32;";
         String whiteForeground = "34;";
@@ -357,7 +357,7 @@ public class ChessClient {
             output += blackForeground;
         }
 
-        if (space == boardSpace.LIGHT) {
+        if (space == BoardSpace.LIGHT) {
             output += lightBackground + "m";
         } else {
             output += darkBackground + "m";
@@ -371,15 +371,15 @@ public class ChessClient {
         return output;
     }
 
-    public boardSpace swapSpace(boardSpace current) {
-        if (current == boardSpace.LIGHT) {
-            return boardSpace.DARK;
+    public BoardSpace swapSpace(BoardSpace current) {
+        if (current == BoardSpace.LIGHT) {
+            return BoardSpace.DARK;
         } else {
-            return boardSpace.LIGHT;
+            return BoardSpace.LIGHT;
         }
     }
 
-    public enum boardSpace {LIGHT, DARK}
+    public enum BoardSpace {LIGHT, DARK}
 
     public void isLoggedIn() {
         if (!loggedIn) {
