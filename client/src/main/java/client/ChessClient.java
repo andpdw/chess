@@ -181,6 +181,7 @@ public class ChessClient {
                 }
             }
             scannedGames = true;
+            clientGameIdCount = gameDataList.size() + 1;
         } catch (ResponseException e) {
             System.out.println(e.getMessage());
         }
@@ -211,6 +212,8 @@ public class ChessClient {
                 color = "WHITE";
             } else if (Objects.equals(params[1], "black")) {
                 color = "BLACK";
+            } else {
+                throw new InvalidParameters("Invalid team color, please try again");
             }
             JoinGameData joinGameData = new JoinGameData(color, gameID);
             server.joinGame(joinGameData, authToken);
@@ -226,6 +229,8 @@ public class ChessClient {
             System.out.println(displayBoard(color, gameData));
         } catch (ResponseException e) {
             System.out.println(errorJsonToString(e.getMessage()));
+        } catch (InvalidParameters e) {
+            throw new InvalidParameters(e.getMessage());
         }
     }
 
