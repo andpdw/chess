@@ -1,10 +1,14 @@
 package client;
 
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.*;
 import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.IndicativeSentencesGeneration;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class ChessClient {
@@ -138,7 +142,7 @@ public class ChessClient {
         try {
             Integer gameID = server.createGame(params[0], authToken);
             gameIdMapping.put(clientGameIdCount, gameID);
-            System.out.println("Created game with ID of " + String.valueOf(clientGameIdCount));
+            System.out.println("Game was created successfully");
             clientGameIdCount++;
         } catch (ResponseException e) {
             System.out.println(e.getMessage());
@@ -150,26 +154,30 @@ public class ChessClient {
 
         try {
             List<GameData> gameDataList = server.listGames(authToken);
-            List<Integer> foundGameIds = new ArrayList<>();
-            for (Integer key : gameIdMapping.keySet()) {
-                for (GameData game : gameDataList) {
-                    if (gameIdMapping.get(key) == game.getID()) {
-                        System.out.println(showGameData(key, game));
-                        foundGameIds.add(game.getID());
-                        break;
+            if (gameDataList.isEmpty()) {
+                System.out.println("There are currently no games");
+            } else {
+                List<Integer> foundGameIds = new ArrayList<>();
+                for (Integer key : gameIdMapping.keySet()) {
+                    for (GameData game : gameDataList) {
+                        if (gameIdMapping.get(key) == game.getID()) {
+                            System.out.println(showGameData(key, game));
+                            foundGameIds.add(game.getID());
+                            break;
+                        }
                     }
                 }
-            }
-            if (foundGameIds.size() != gameDataList.size()) {
-                for (GameData game : gameDataList) {
-                    if (!foundGameIds.contains(game.getID())) {
-                        gameIdMapping.put(clientGameIdCount, game.getID());
-                        System.out.println(showGameData(clientGameIdCount, game));
-                        clientGameIdCount++;
+                if (foundGameIds.size() != gameDataList.size()) {
+                    for (GameData game : gameDataList) {
+                        if (!foundGameIds.contains(game.getID())) {
+                            gameIdMapping.put(clientGameIdCount, game.getID());
+                            System.out.println(showGameData(clientGameIdCount, game));
+                            clientGameIdCount++;
+                        }
                     }
                 }
+                scannedGames = true;
             }
-            scannedGames = true;
         } catch (ResponseException e) {
             System.out.println(e.getMessage());
         }
@@ -208,7 +216,7 @@ public class ChessClient {
             if (gameData == null) {
                 throw new InvalidParameters("Could not find a game with that ID");
             }
-            System.out.println(displayBoard(params[1], gameData));
+            System.out.println(displayBoard(color, gameData));
         } catch (ResponseException e) {
             System.out.println(errorJsonToString(e.getMessage()));
         }
@@ -268,8 +276,101 @@ public class ChessClient {
     }
 
     public String displayBoard(String playerColor, GameData gameData) {
-        return "Board joined";
+        StringBuilder output = new StringBuilder();
+        Integer count = 1;
+        Integer countDir = 1;
+        List<String> colVal = new ArrayList<>(List.of("h", "g", "f", "e", "d", "c", "b", "a"));
+        String boardColor = "\u001b[30;47;1m";
+        String endColorCode = "\u001b[0m";
+        boardSpace currentSpace = boardSpace.LIGHT;
+
+        if (playerColor == null || playerColor.equals("WHITE")) {
+            count = 8;
+            countDir = -1;
+            Collections.reverse(colVal);
+        }
+
+        //Top row
+        output.append(boardColor);
+        output.append(setSpace(" "));
+        for (String col : colVal) {
+            output.append(setSpace(col));
+        }
+        output.append(setSpace(" "));
+        output.append(endColorCode);
+        output.append("\n");
+
+        for (int y = count; (y > 0 && y < 9); y += countDir) {
+            for (int x = 0; x < 10; x++) {
+                if (x == 0 || x == 9) {
+                    output.append(boardColor);
+                    output.append(setSpace(String.valueOf(y)));
+                    output.append(endColorCode);
+                } else {
+                    ChessPosition pos = new ChessPosition(y, x);
+                    ChessPiece piece = gameData.getGame().getBoard().getPiece(pos);
+                    output.append(setBoardSpace(piece, currentSpace));
+                    currentSpace = swapSpace(currentSpace);
+                }
+            }
+            output.append("\n");
+            currentSpace = swapSpace(currentSpace);
+        }
+
+        //Bottom Row
+        output.append(boardColor);
+        output.append(setSpace(" "));
+        for (String col : colVal) {
+            output.append(setSpace(col));
+        }
+        output.append(setSpace(" "));
+        output.append(endColorCode);
+
+        return output.toString();
     }
+
+    public String setSpace(String val) {
+        return " " + val + " ";
+    }
+
+    public String setBoardSpace(ChessPiece piece, boardSpace space) {
+        String escapeSeq = "\u001b[";
+        String blackForeground = "32;";
+        String whiteForeground = "34;";
+        String darkBackground = "40";
+        String lightBackground = "100";
+
+        String output = escapeSeq;
+
+        if (piece == null || piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            output += whiteForeground;
+        } else {
+            output += blackForeground;
+        }
+
+        if (space == boardSpace.LIGHT) {
+            output += lightBackground + "m";
+        } else {
+            output += darkBackground + "m";
+        }
+
+        if (piece == null) {
+            output += "   ";
+        } else {
+            output += " " + piece + " ";
+        }
+        return output;
+    }
+
+    public boardSpace swapSpace(boardSpace current) {
+        if (current == boardSpace.LIGHT) {
+            return boardSpace.DARK;
+        } else {
+            return boardSpace.LIGHT;
+        }
+    }
+
+    public enum boardSpace {LIGHT, DARK}
 
     public void isLoggedIn() {
         if (!loggedIn) {
