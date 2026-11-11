@@ -1,11 +1,12 @@
 package client;
 
-import model.AuthData;
-import model.LoginData;
-import model.UserData;
+import model.*;
 import org.eclipse.jetty.util.log.Log;
 import org.junit.jupiter.api.*;
 import server.Server;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ServerFacadeTests {
@@ -44,16 +45,14 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Logout User")
     public void logoutUser() {
-        UserData userData = new UserData("user", "pass", "email");
-        AuthData authdata = serverFacade.registerUser(userData);
+        AuthData authdata = registerDefaultUser();
         Assertions.assertDoesNotThrow(() -> serverFacade.logoutUser(authdata.getAuthToken()));
     }
 
     @Test
     @DisplayName("Login User")
     public void loginUser() {
-        UserData userData = new UserData("user", "pass", "email");
-        AuthData authData = serverFacade.registerUser(userData);
+        AuthData authData = registerDefaultUser();
         serverFacade.logoutUser(authData.getAuthToken());
         LoginData loginData = new LoginData("user", "pass");
         LoginData badData = new LoginData("badUser", "pass");
@@ -64,9 +63,49 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Create Game")
     public void createGame() {
-        UserData userData = new UserData("user", "pass", "email");
-        AuthData authData = serverFacade.registerUser(userData);
+        AuthData authData = registerDefaultUser();
         Assertions.assertDoesNotThrow(() -> serverFacade.createGame("game", authData.getAuthToken()));
+    }
+
+    @Test
+    @DisplayName("List Games")
+    public void listGames() {
+        AuthData authData = registerDefaultUser();
+        serverFacade.createGame("game", authData.getAuthToken());
+        serverFacade.createGame("game2", authData.getAuthToken());
+        serverFacade.createGame("game3", authData.getAuthToken());
+
+        Assertions.assertDoesNotThrow(() -> serverFacade.listGames(authData.getAuthToken()));
+        List<GameData> gameDataList = serverFacade.listGames(authData.getAuthToken());
+        Assertions.assertEquals(3, gameDataList.size());
+    }
+
+    @Test
+    @DisplayName("Join Game")
+    public void joinGame() {
+        AuthData authData = registerDefaultUser();
+        serverFacade.createGame("game", authData.getAuthToken());
+        GameData correctGameData = serverFacade.listGames(authData.getAuthToken()).getFirst();
+        correctGameData.setBlackUserName("user");
+
+        JoinGameData joinGameData = new JoinGameData("BLACK", correctGameData.getID());
+        serverFacade.joinGame(joinGameData, authData.getAuthToken());
+        GameData returnedGameData = serverFacade.listGames(authData.getAuthToken()).getFirst();
+
+        Assertions.assertEquals(correctGameData.getBlackUsername(), returnedGameData.getBlackUsername());
+    }
+
+    @Test
+    @DisplayName("Bad Server Connection")
+    public void badServerTest() {
+        serverFacade = new ServerFacade("http://localhost:1234");
+        UserData userData = new UserData("user", "pass", "email");
+        Assertions.assertThrows(ServerConnectionException.class, () -> serverFacade.registerUser(userData));
+    }
+
+    public AuthData registerDefaultUser() {
+        UserData userData = new UserData("user", "pass", "email");
+        return serverFacade.registerUser(userData);
     }
 
 }
