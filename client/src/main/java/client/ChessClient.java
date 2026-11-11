@@ -5,10 +5,7 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.*;
-import org.eclipse.jetty.server.Authentication;
-import org.junit.jupiter.api.IndicativeSentencesGeneration;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class ChessClient {
@@ -19,6 +16,7 @@ public class ChessClient {
     private Map<Integer, Integer> gameIdMapping;
     private Integer clientGameIdCount = 1;
     private Boolean scannedGames;
+    String defaultColors = "\u001b[32;40m";
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -27,7 +25,8 @@ public class ChessClient {
     }
 
     public void run() {
-        System.out.println("Welcome to my chess game! Sign in or register to start.");
+        System.out.print(defaultColors);
+        System.out.println("Welcome to my chess game! Sign in or register to start, or type \"help\" for more options.");
 
         Scanner scanner  = new Scanner(System.in);
         var line = "";
@@ -70,27 +69,31 @@ public class ChessClient {
     }
 
     public void help() {
+        String commandColor = "\u001b[32;40m";
+        String descriptionColor = "\u001b[31;40m";
         if (loggedIn) {
             System.out.print("" +
-                    "\thelp\t- list possible commands\n" +
-                    "\tlogout\t- logout of client\n" +
-                    "\tcreate <NAME> \t- create a game\n" +
-                    "\tlist\t- lists current games\n" +
-                    "\tjoin <ID> <WHITE|BLACK>\t- join game with id and color\n" +
-                    "\tobserve <ID>\t- observe game with id\n\n");
+                    commandColor + "\thelp " + descriptionColor + "- list possible commands\n" +
+                    commandColor + "\tlogout " + descriptionColor + "- logout of client\n" +
+                    commandColor + "\tcreate <NAME> " + descriptionColor + "- create a game\n" +
+                    commandColor + "\tlist " + descriptionColor + "- lists current games\n" +
+                    commandColor + "\tjoin <ID> <WHITE|BLACK> " + descriptionColor + "- join game with id and color\n" +
+                    commandColor + "\tobserve <ID> " + descriptionColor + "- observe game with id\n" +
+                    defaultColors);
         } else {
             System.out.print("" +
-                    "\thelp\t- list possible commands\n" +
-                    "\tquit\t- exit the program\n" +
-                    "\tlogin <USERNAME> <PASSWORD>\t- login to user\n" +
-                    "\tregister <USERNAME> <PASSWORD> <EMAIL>\t- register a new account\n\n");
+                    commandColor + "\thelp " + descriptionColor + "- list possible commands\n" +
+                    commandColor + "\tquit " + descriptionColor + "- exit the program\n" +
+                    commandColor + "\tlogin <USERNAME> <PASSWORD> " + descriptionColor + "- login to user\n" +
+                    commandColor + "\tregister <USERNAME> <PASSWORD> <EMAIL> " + descriptionColor + "- register a new account\n" +
+                    defaultColors);
         }
     }
 
     public void register(String... params) {
         isLoggedOut();
         if (params.length != 3) {
-            throw new InvalidParameters("Incorrect number of parameters");
+            throw new InvalidParameters("Incorrect number of parameters, type \"help\" for more information");
         }
 
         try {
@@ -98,7 +101,7 @@ public class ChessClient {
             AuthData authData = server.registerUser(userData);
             authToken = authData.getAuthToken();
             loggedIn = Boolean.TRUE;
-            System.out.println("Registered the user " + params[0]);
+            System.out.println("Registration successful. Logged in as " + params[0]);
         } catch (ResponseException e) {
             System.out.println(errorJsonToString(e.getMessage()));
         }
@@ -107,7 +110,7 @@ public class ChessClient {
     public void login(String... params) {
         isLoggedOut();
         if (params.length != 2) {
-            throw new InvalidParameters("Incorrect number of parameters");
+            throw new InvalidParameters("Incorrect number of parameters, type \"help\" for more information");
         }
 
         try {
@@ -115,7 +118,7 @@ public class ChessClient {
             AuthData authData = server.loginUser(loginData);
             authToken = authData.getAuthToken();
             loggedIn = Boolean.TRUE;
-            System.out.println("Logged in to the user " + params[0]);
+            System.out.println("Logged in as " + params[0]);
         } catch (ResponseException e) {
             System.out.println(errorJsonToString(e.getMessage()));
         }
@@ -136,13 +139,13 @@ public class ChessClient {
     public void createGame(String... params) {
         isLoggedIn();
         if (params.length != 1) {
-            throw new InvalidParameters("Incorrect number of parameters");
+            throw new InvalidParameters("Incorrect number of parameters, type \"help\" for more information");
         }
 
         try {
             Integer gameID = server.createGame(params[0], authToken);
             gameIdMapping.put(clientGameIdCount, gameID);
-            System.out.println("Game was created successfully");
+            System.out.println("Game was created successfully, type list to get gameID");
             clientGameIdCount++;
         } catch (ResponseException e) {
             System.out.println(e.getMessage());
@@ -155,7 +158,7 @@ public class ChessClient {
         try {
             List<GameData> gameDataList = server.listGames(authToken);
             if (gameDataList.isEmpty()) {
-                System.out.println("There are currently no games");
+                System.out.println("There are currently no games in the database. Use create command to make new game.");
             } else {
                 List<Integer> foundGameIds = new ArrayList<>();
                 for (Integer key : gameIdMapping.keySet()) {
@@ -189,9 +192,15 @@ public class ChessClient {
             throw new InvalidParameters("Must run list games before joining a game");
         }
         if (params.length != 2) {
-            throw new InvalidParameters("Incorrect number of parameters");
+            throw new InvalidParameters("Incorrect number of parameters, type \"help\" for more information");
         }
-        Integer gameID = gameIdMapping.get(Integer.parseInt(params[0]));
+        int publicGameId;
+        try {
+            publicGameId = Integer.parseInt(params[0]);
+        } catch (Exception e) {
+            throw new InvalidParameters("Game ID must be a int, please try again");
+        }
+        Integer gameID = gameIdMapping.get(publicGameId);
         if (gameID == null) {
             throw new InvalidParameters("Could not find a game with that ID");
         }
@@ -213,9 +222,7 @@ public class ChessClient {
                     break;
                 }
             }
-            if (gameData == null) {
-                throw new InvalidParameters("Could not find a game with that ID");
-            }
+            System.out.println("Joining the game");
             System.out.println(displayBoard(color, gameData));
         } catch (ResponseException e) {
             System.out.println(errorJsonToString(e.getMessage()));
@@ -228,15 +235,16 @@ public class ChessClient {
             throw new InvalidParameters("Must run list games before joining a game");
         }
         if (params.length != 1) {
-            throw new InvalidParameters("Incorrect number of parameters for that command");
+            throw new InvalidParameters("Incorrect number of parameters, type \"help\" for more information");
         }
 
-        Integer internalGameId;
+        int publicGameId;
         try {
-            internalGameId = gameIdMapping.get(Integer.parseInt(params[0]));
+            publicGameId = Integer.parseInt(params[0]);
         } catch (Exception e) {
-            throw new InvalidParameters("Invalid gameID");
+            throw new InvalidParameters("Game ID must be a int, please try again");
         }
+        Integer internalGameId = gameIdMapping.get(publicGameId);
 
         try {
             List<GameData> gameDataList = server.listGames(authToken);
@@ -324,7 +332,8 @@ public class ChessClient {
             output.append(setSpace(col));
         }
         output.append(setSpace(" "));
-        output.append(endColorCode);
+        output.append("\n");
+        output.append(defaultColors);
 
         return output.toString();
     }
